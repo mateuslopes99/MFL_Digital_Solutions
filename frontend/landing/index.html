@@ -1,0 +1,1953 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MFL Digital Solutions — Qualificação Automática de Leads via WhatsApp com IA</title>
+  <meta name="description"
+    content="Qualifique leads automaticamente via WhatsApp com IA. Aumente sua taxa de conversão em até 3x, economize 41h/semana e conquiste mais clientes com o sistema MFL Digital Solutions.">
+  <meta name="robots" content="index, follow">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="MFL Digital Solutions — Qualificação de Leads com IA">
+  <meta property="og:description"
+    content="Qualifique leads automaticamente via WhatsApp com IA. Aumente sua taxa de conversão em até 3x e economize 41h/semana.">
+  <meta property="og:locale" content="pt_BR">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MFL Digital Solutions">
+  <meta name="twitter:description"
+    content="Qualificação automática de leads via WhatsApp com IA para imobiliárias e empresas.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --green: #00C853;
+      --green-dark: #009624;
+      --green-glow: rgba(0, 200, 83, 0.18);
+      --black: #080C0A;
+      --surface: #0E1410;
+      --surface2: #141A15;
+      --border: rgba(0, 200, 83, 0.15);
+      --text: #E8F0EA;
+      --muted: #7A917E;
+      --white: #ffffff;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--black);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(8, 12, 10, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 0 8px rgba(0, 200, 83, 0);
+      }
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color .2s;
+    }
+
+    nav a:hover {
+      color: var(--green);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+    }
+
+    .btn-nav {
+      background: var(--green);
+      color: var(--black);
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all .2s;
+      font-family: 'Syne', sans-serif;
+    }
+
+    .btn-nav:hover {
+      background: #00E564;
+      transform: translateY(-1px);
+      color: var(--black);
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 0%, rgba(0, 200, 83, 0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 80%, rgba(0, 200, 83, 0.06) 0%, transparent 60%);
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 200, 83, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 200, 83, 0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 0%, transparent 100%);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 200, 83, 0.1);
+      border: 1px solid rgba(0, 200, 83, 0.3);
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 12px;
+      color: var(--green);
+      font-weight: 500;
+      margin-bottom: 32px;
+      position: relative;
+      animation: fadeDown 0.6s ease both;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes fadeDown {
+      from {
+        opacity: 0;
+        transform: translateY(-16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(28px, 5vw, 80px);
+      font-weight: 800;
+      line-height: 1.08;
+      color: var(--white);
+      max-width: 900px;
+      width: 100%;
+      position: relative;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--green);
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero h1 em::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--green);
+      border-radius: 2px;
+      animation: expandWidth 0.8s 0.8s ease both;
+      transform-origin: left;
+    }
+
+    @keyframes expandWidth {
+      from {
+        transform: scaleX(0);
+      }
+
+      to {
+        transform: scaleX(1);
+      }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 24px auto 48px;
+      animation: fadeUp 0.7s 0.2s ease both;
+      font-weight: 300;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: var(--black);
+      padding: 16px 36px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 16px;
+      text-decoration: none;
+      transition: all .25s;
+      font-family: 'Syne', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 0 40px rgba(0, 200, 83, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: #00E564;
+      transform: translateY(-2px);
+      box-shadow: 0 0 60px rgba(0, 200, 83, 0.5);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      padding: 16px 36px;
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 16px;
+      text-decoration: none;
+      transition: all .25s;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--green);
+      color: var(--green);
+      transform: translateY(-2px);
+    }
+
+    /* STATS */
+    .stats-bar {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 40px 24px;
+    }
+
+    .stats-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .stat {
+      text-align: center;
+      padding: 0 24px;
+      border-right: 1px solid var(--border);
+    }
+
+    .stat:last-child {
+      border-right: none;
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--green);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* SECTION */
+    section {
+      padding: 96px 24px;
+    }
+
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-tag {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--green);
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .section-sub {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 520px;
+      font-weight: 300;
+    }
+
+    /* PROBLEM */
+    .problem-section {
+      background: var(--surface);
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      margin-top: 64px;
+    }
+
+    .problem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .problem-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 20px;
+      border-radius: 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      transition: border-color .2s;
+    }
+
+    .problem-item:hover {
+      border-color: rgba(0, 200, 83, 0.4);
+    }
+
+    .problem-icon {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      background: rgba(255, 59, 59, 0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .problem-item h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .problem-item p {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .problem-visual {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .problem-visual::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255, 59, 59, 0.1), transparent);
+      border-radius: 50%;
+    }
+
+    .loss-display {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .loss-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 72px;
+      font-weight: 800;
+      color: #FF3B3B;
+      line-height: 1;
+    }
+
+    .loss-label {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .funnel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .funnel-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .funnel-bar-wrap {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      height: 8px;
+      overflow: hidden;
+    }
+
+    .funnel-bar {
+      height: 100%;
+      border-radius: 4px;
+    }
+
+    .funnel-label {
+      font-size: 12px;
+      color: var(--muted);
+      width: 100px;
+    }
+
+    .funnel-pct {
+      font-size: 12px;
+      font-weight: 600;
+      width: 36px;
+      text-align: right;
+    }
+
+    /* HOW IT WORKS */
+    .flow-title {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .flow-title .section-sub {
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .flow::before {
+      content: '';
+      position: absolute;
+      left: 31px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--green), rgba(0, 200, 83, 0.1));
+    }
+
+    .flow-step {
+      display: flex;
+      gap: 24px;
+      padding: 0 0 40px;
+      position: relative;
+    }
+
+    .step-num {
+      width: 64px;
+      min-width: 64px;
+      height: 64px;
+      background: var(--surface2);
+      border: 2px solid var(--green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--green);
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-content {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      flex: 1;
+      transition: border-color .2s;
+    }
+
+    .step-content:hover {
+      border-color: rgba(0, 200, 83, 0.4);
+    }
+
+    .step-content h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .step-content p {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .step-tag {
+      display: inline-block;
+      background: rgba(0, 200, 83, 0.1);
+      color: var(--green);
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      margin-top: 12px;
+      font-weight: 600;
+    }
+
+    /* CONVERSATION DEMO */
+    .demo-section {
+      background: var(--surface);
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      margin-top: 64px;
+    }
+
+    .phone-frame {
+      background: #1A1A1A;
+      border-radius: 40px;
+      padding: 20px 12px;
+      border: 8px solid #2A2A2A;
+      max-width: 320px;
+      margin: 0 auto;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .phone-bar {
+      background: #25D366;
+      border-radius: 8px 8px 0 0;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 0;
+    }
+
+    .phone-avatar {
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .phone-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .phone-status {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .chat {
+      background: #0B1410;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      border-radius: 0 0 8px 8px;
+      padding: 16px 12px;
+      max-height: 460px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .msg {
+      max-width: 80%;
+      animation: msgIn 0.3s ease both;
+    }
+
+    .msg-bot {
+      align-self: flex-start;
+    }
+
+    .msg-user {
+      align-self: flex-end;
+    }
+
+    @keyframes msgIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .bubble {
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .bubble-bot {
+      background: #1F2E25;
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+
+    .bubble-user {
+      background: #005C4B;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg-time {
+      font-size: 10px;
+      color: #555;
+      margin-top: 3px;
+      padding: 0 4px;
+    }
+
+    .msg-user .msg-time {
+      text-align: right;
+    }
+
+    .hot-badge {
+      background: rgba(255, 60, 0, 0.15);
+      border: 1px solid rgba(255, 60, 0, 0.4);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #FF6B35;
+      align-self: center;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .demo-info {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .info-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .info-card h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      color: var(--white);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-card p {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* RESULTS */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 64px;
+    }
+
+    .result-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      transition: all .3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--green), transparent);
+    }
+
+    .result-card:hover {
+      border-color: rgba(0, 200, 83, 0.4);
+      transform: translateY(-4px);
+    }
+
+    .result-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+
+    .result-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--green);
+      line-height: 1;
+    }
+
+    .result-label {
+      font-size: 16px;
+      color: var(--white);
+      font-weight: 600;
+      margin: 8px 0 4px;
+    }
+
+    .result-desc {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* PRICING */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 64px;
+      align-items: start;
+    }
+
+    .price-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 28px;
+      position: relative;
+      transition: all .3s;
+    }
+
+    .price-card:hover {
+      border-color: rgba(0, 200, 83, 0.3);
+      transform: translateY(-4px);
+    }
+
+    .price-card.featured {
+      border-color: var(--green);
+      background: linear-gradient(135deg, rgba(0, 200, 83, 0.08), var(--surface2));
+    }
+
+    .featured-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--green);
+      color: var(--black);
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'Syne', sans-serif;
+      padding: 4px 14px;
+      border-radius: 100px;
+    }
+
+    .price-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .price-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--white);
+      margin: 16px 0 4px;
+      line-height: 1;
+    }
+
+    .price-val span {
+      font-size: 18px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .price-setup {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    .price-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .price-features li {
+      font-size: 14px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .price-features li::before {
+      content: '✓';
+      color: var(--green);
+      font-weight: 700;
+      min-width: 14px;
+    }
+
+    .btn-price {
+      display: block;
+      text-align: center;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all .2s;
+      font-family: 'Syne', sans-serif;
+    }
+
+    .btn-price-primary {
+      background: var(--green);
+      color: var(--black);
+    }
+
+    .btn-price-primary:hover {
+      background: #00E564;
+    }
+
+    .btn-price-outline {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text);
+    }
+
+    .btn-price-outline:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    /* TESTIMONIAL */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 64px;
+    }
+
+    .testimonial {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+
+    .testimonial-text {
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 20px;
+      font-style: italic;
+      line-height: 1.7;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .author-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--green-glow);
+      border: 2px solid var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .author-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .author-role {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .stars {
+      color: #FFD700;
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+
+    /* CTA */
+    .cta-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      padding: 96px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(0, 200, 83, 0.08), transparent);
+    }
+
+    .cta-section h2 {
+      position: relative;
+    }
+
+    .cta-section p {
+      font-size: 18px;
+      color: var(--muted);
+      margin: 20px auto 48px;
+      max-width: 500px;
+      position: relative;
+    }
+
+    .cta-section .hero-ctas {
+      position: relative;
+    }
+
+    /* FORM */
+    .contact-form {
+      max-width: 560px;
+      margin: 48px auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    input,
+    select,
+    textarea {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 15px;
+      width: 100%;
+      transition: border-color .2s;
+      outline: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--green);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--muted);
+    }
+
+    select option {
+      background: var(--surface2);
+    }
+
+    textarea {
+      resize: none;
+      height: 100px;
+    }
+
+    .submit-btn {
+      background: var(--green);
+      color: var(--black);
+      border: none;
+      padding: 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      font-family: 'Syne', sans-serif;
+      transition: all .2s;
+      box-shadow: 0 0 40px rgba(0, 200, 83, 0.3);
+    }
+
+    .submit-btn:hover {
+      background: #00E564;
+      transform: translateY(-2px);
+    }
+
+    /* TECH STACK */
+    .tech-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 48px;
+    }
+
+    .tech-badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 10px 24px;
+      font-size: 14px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all .2s;
+    }
+
+    .tech-badge:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .tech-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 48px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .footer-copy {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      color: var(--green);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav {
+        padding: 16px 20px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .stats-inner {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stat:nth-child(2) {
+        border-right: none;
+      }
+
+      .problem-grid,
+      .demo-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .results-grid,
+      .pricing-grid,
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      footer {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .hero {
+        padding: 100px 16px 60px;
+      }
+
+      .hero h1 {
+        font-size: 36px;
+      }
+
+      .section-inner {
+        padding: 0 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .stat {
+        border-right: none !important;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 24px;
+      }
+
+      .stat:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+      }
+    }
+
+    /* ANIMATIONS */
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .delay-1 {
+      transition-delay: 0.1s;
+    }
+
+    .delay-2 {
+      transition-delay: 0.2s;
+    }
+
+    .delay-3 {
+      transition-delay: 0.3s;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">
+      <div class="logo-dot"></div>
+      MFL Digital Solutions
+    </div>
+    <div class="nav-links">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#resultados">Resultados</a>
+      <a href="#precos">Preços</a>
+      <a href="#contato">Contato</a>
+    </div>
+    <a href="#contato" class="btn-nav">Falar com especialista</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+
+    <div class="badge">
+      <div class="badge-dot"></div>
+      Especializado em Imobiliárias · Maceió-AL
+    </div>
+
+    <h1>Pare de perder leads.<br>Qualifique <em>automaticamente</em><br>com IA.</h1>
+
+    <p>Seu WhatsApp responde, qualifica e distribui leads 24/7 — em menos de 2 minutos. Sem perder oportunidades, sem
+      sobrecarregar corretores.</p>
+
+    <div class="hero-ctas">
+      <a href="#contato" class="btn-primary">
+        <span>🚀</span> Quero uma demonstração gratuita
+      </a>
+      <a href="#como-funciona" class="btn-secondary">
+        <span>▶</span> Ver como funciona
+      </a>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stats-inner">
+      <div class="stat">
+        <div class="stat-num">50%</div>
+        <div class="stat-label">dos leads perdidos na qualificação manual</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">2min</div>
+        <div class="stat-label">tempo de resposta com automação</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">+30%</div>
+        <div class="stat-label">aumento na taxa de conversão</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">qualificação automática sem parar</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROBLEMA -->
+  <section class="problem-section">
+    <div class="section-inner">
+      <span class="section-tag">O problema</span>
+      <h2>Seu time está gastando tempo<br>no lugar errado</h2>
+      <p class="section-sub">Corretores gastam 20-30h/semana respondendo perguntas básicas. Enquanto isso, leads quentes
+        esfriam esperando resposta.</p>
+
+      <div class="problem-grid">
+        <div class="problem-list">
+          <div class="problem-item animate-on-scroll">
+            <div class="problem-icon">⏰</div>
+            <div>
+              <h4>Tempo de resposta de 2-4 horas</h4>
+              <p>Leads respondem imediatamente. Você não pode esperar horas para qualificá-los — a concorrência liga
+                antes.</p>
+            </div>
+          </div>
+          <div class="problem-item animate-on-scroll delay-1">
+            <div class="problem-icon">👥</div>
+            <div>
+              <h4>Corretores sobrecarregados</h4>
+              <p>20-30h/semana respondendo "quantos quartos?", "qual o preço?", "fica em qual bairro?" em vez de fechar
+                negócios.</p>
+            </div>
+          </div>
+          <div class="problem-item animate-on-scroll delay-2">
+            <div class="problem-icon">📉</div>
+            <div>
+              <h4>50% dos leads desperdiçados</h4>
+              <p>Leads quentes ficam frios. A taxa de qualificação cai de 80% para 40% sem um sistema estruturado.</p>
+            </div>
+          </div>
+          <div class="problem-item animate-on-scroll delay-3">
+            <div class="problem-icon">🔀</div>
+            <div>
+              <h4>Distribuição desorganizada</h4>
+              <p>Leads distribuídos no grito, sem critério de qualificação. Corretor errado atende cliente errado.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-visual animate-on-scroll delay-1">
+          <div class="loss-display">
+            <div class="loss-num">R$ 125K</div>
+            <div class="loss-label">perdidos por mês em leads não qualificados</div>
+          </div>
+          <div class="funnel">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Funil atual sem automação:</div>
+            <div class="funnel-row">
+              <div class="funnel-label" style="font-size:11px;color:var(--muted);">Leads chegam</div>
+              <div class="funnel-bar-wrap">
+                <div class="funnel-bar" style="width:100%;background:#4CAF50;"></div>
+              </div>
+              <div class="funnel-pct" style="color:#4CAF50">100%</div>
+            </div>
+            <div class="funnel-row">
+              <div class="funnel-label" style="font-size:11px;color:var(--muted);">Respondidos</div>
+              <div class="funnel-bar-wrap">
+                <div class="funnel-bar" style="width:70%;background:#8BC34A;"></div>
+              </div>
+              <div class="funnel-pct" style="color:#8BC34A">70%</div>
+            </div>
+            <div class="funnel-row">
+              <div class="funnel-label" style="font-size:11px;color:var(--muted);">Qualificados</div>
+              <div class="funnel-bar-wrap">
+                <div class="funnel-bar" style="width:40%;background:#FF9800;"></div>
+              </div>
+              <div class="funnel-pct" style="color:#FF9800">40%</div>
+            </div>
+            <div class="funnel-row">
+              <div class="funnel-label" style="font-size:11px;color:var(--muted);">Reuniões</div>
+              <div class="funnel-bar-wrap">
+                <div class="funnel-bar" style="width:20%;background:#FF5722;"></div>
+              </div>
+              <div class="funnel-pct" style="color:#FF5722">20%</div>
+            </div>
+            <div class="funnel-row">
+              <div class="funnel-label" style="font-size:11px;color:var(--muted);">Vendas</div>
+              <div class="funnel-bar-wrap">
+                <div class="funnel-bar" style="width:8%;background:#F44336;"></div>
+              </div>
+              <div class="funnel-pct" style="color:#F44336">8%</div>
+            </div>
+            <div
+              style="margin-top:20px;padding:12px;background:rgba(0,200,83,0.08);border:1px solid rgba(0,200,83,0.2);border-radius:8px;font-size:12px;color:var(--green);text-align:center;">
+              ↑ Com automação: vendas chegam a 15%+ (+87%)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMO FUNCIONA -->
+  <section id="como-funciona">
+    <div class="section-inner">
+      <div class="flow-title">
+        <span class="section-tag">Como funciona</span>
+        <h2>Da mensagem ao lead quente<br>em menos de 2 minutos</h2>
+        <p class="section-sub">Sistema totalmente automatizado que funciona enquanto você dorme.</p>
+      </div>
+
+      <div class="flow">
+        <div class="flow-step animate-on-scroll">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Lead manda mensagem no WhatsApp</h3>
+            <p>O cliente viu o anúncio do imóvel no Instagram ou Google e manda mensagem. Pode ser a qualquer hora — 2h
+              da manhã, domingo, feriado.</p>
+            <span class="step-tag">Trigger automático em 3 segundos</span>
+          </div>
+        </div>
+
+        <div class="flow-step animate-on-scroll delay-1">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>IA inicia conversa e qualifica</h3>
+            <p>O sistema responde imediatamente com perguntas estratégicas: orçamento, tipo de imóvel, urgência, bairro
+              desejado. A conversa é natural, não parece robô.</p>
+            <span class="step-tag">Resposta em menos de 30 segundos</span>
+          </div>
+        </div>
+
+        <div class="flow-step animate-on-scroll delay-2">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>Classificação automática: 🔥 HOT / 🟡 WARM / ❄️ COLD</h3>
+            <p>Baseado nas respostas, o sistema pontua o lead automaticamente. HOT vai direto para o corretor. WARM
+              entra em nurturing. COLD entra em sequência de follow-up.</p>
+            <span class="step-tag">Score calculado por IA em tempo real</span>
+          </div>
+        </div>
+
+        <div class="flow-step animate-on-scroll delay-3">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h3>Distribuição inteligente para o corretor certo</h3>
+            <p>Lead HOT é atribuído automaticamente ao corretor com expertise no perfil (bairro, faixa de preço, tipo).
+              Corretor recebe contexto completo da conversa.</p>
+            <span class="step-tag">Notificação instantânea no celular</span>
+          </div>
+        </div>
+
+        <div class="flow-step animate-on-scroll">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <h3>Corretor entra com contexto completo</h3>
+            <p>Quando o corretor assume, já sabe: orçamento, urgência, tipo de imóvel, bairro desejado. Sem repetir
+              perguntas. Direito para a proposta.</p>
+            <span class="step-tag">Lead quente, pronto para fechar</span>
+          </div>
+        </div>
+
+        <div class="flow-step animate-on-scroll delay-1">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <h3>CRM atualizado automaticamente + follow-up</h3>
+            <p>Todo dado é salvo no CRM. Leads que não responderam recebem follow-up automático em 24h, 48h e 7 dias.
+              Nenhum lead esquecido.</p>
+            <span class="step-tag">Zero trabalho manual de registro</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEMO -->
+  <section class="demo-section" id="demo">
+    <div class="section-inner">
+      <div class="demo-grid">
+        <div class="phone-frame animate-on-scroll">
+          <div class="phone-bar">
+            <div class="phone-avatar">🏠</div>
+            <div>
+              <div class="phone-name">Imóveis Premium MCZ</div>
+              <div class="phone-status">Online agora</div>
+            </div>
+          </div>
+          <div class="chat">
+            <div class="msg msg-user" style="animation-delay:0.1s">
+              <div class="bubble bubble-user">Oi, vi o anúncio do apt em Ponta Verde</div>
+              <div class="msg-time">09:47</div>
+            </div>
+            <div class="msg msg-bot" style="animation-delay:0.3s">
+              <div class="bubble bubble-bot">Oi! 👋 Fico feliz que tenha interesse! Vou te ajudar a encontrar o imóvel
+                perfeito em Ponta Verde.<br><br>Qual faixa de investimento você tem em mente?<br><br>a) Até R$
+                400K<br>b) R$ 400K – R$ 800K<br>c) R$ 800K – R$ 1,5M<br>d) Acima de R$ 1,5M</div>
+              <div class="msg-time">09:47</div>
+            </div>
+            <div class="msg msg-user" style="animation-delay:0.5s">
+              <div class="bubble bubble-user">b) R$ 400K – R$ 800K</div>
+              <div class="msg-time">09:48</div>
+            </div>
+            <div class="msg msg-bot" style="animation-delay:0.7s">
+              <div class="bubble bubble-bot">Ótima faixa! Temos opções incríveis nesse perfil. 🏡<br><br>Qual tipo você
+                prefere?<br><br>a) Apto 2 quartos<br>b) Apto 3 quartos<br>c) Cobertura<br>d) Casa em condomínio</div>
+              <div class="msg-time">09:48</div>
+            </div>
+            <div class="msg msg-user" style="animation-delay:0.9s">
+              <div class="bubble bubble-user">b) 3 quartos, de preferência com suíte</div>
+              <div class="msg-time">09:49</div>
+            </div>
+            <div class="msg msg-bot" style="animation-delay:1.1s">
+              <div class="bubble bubble-bot">Perfeito! Última pergunta: qual sua urgência?<br><br>a) Estou pesquisando
+                (+ 6 meses)<br>b) Em 1-3 meses<br>c) Urgente — próximas semanas</div>
+              <div class="msg-time">09:49</div>
+            </div>
+            <div class="msg msg-user" style="animation-delay:1.3s">
+              <div class="bubble bubble-user">c) Urgente, preciso fechar esse mês</div>
+              <div class="msg-time">09:50</div>
+            </div>
+            <div class="hot-badge" style="animation-delay:1.5s">
+              🔥 LEAD HOT DETECTADO — Score: 94/100<br>Direcionando para corretor sênior...
+            </div>
+            <div class="msg msg-bot" style="animation-delay:1.7s">
+              <div class="bubble bubble-bot">Excelente! Com esse perfil, temos opções perfeitas para você.
+                🎯<br><br>Nosso especialista em Ponta Verde vai entrar em contato em <strong>até 10 minutos</strong>.
+                Qual seu nome?</div>
+              <div class="msg-time">09:50</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-info animate-on-scroll delay-2">
+          <span class="section-tag">Veja ao vivo</span>
+          <h2 style="font-size:36px;">Conversa natural.<br>Resultado real.</h2>
+          <p class="section-sub">Em 3 minutos o sistema identificou: orçamento, preferência, urgência. O corretor recebe
+            tudo pronto.</p>
+
+          <div class="info-card">
+            <h4>📊 O que o corretor recebe</h4>
+            <p>Nome · Orçamento R$ 400-800K · 3 quartos c/ suíte · Urgência ALTA · Ponta Verde · Score 94 · Pronto para
+              proposta</p>
+          </div>
+          <div class="info-card">
+            <h4>⚡ Tempo médio de qualificação</h4>
+            <p><strong style="color:var(--green);font-size:24px;font-family:'Syne',sans-serif">1min 47s</strong> vs 30+
+              minutos manual</p>
+          </div>
+          <div class="info-card">
+            <h4>🔄 Integra com seu CRM</h4>
+            <p>Pipedrive, RD Station, HubSpot ou qualquer CRM. Dados salvos automaticamente, sem trabalho manual.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTADOS -->
+  <section id="resultados">
+    <div class="section-inner">
+      <span class="section-tag">Resultados comprovados</span>
+      <h2>Números que justificam o investimento</h2>
+      <p class="section-sub">Com apenas 7 clientes, o sistema já se paga. Com 20, você lucra R$ 36K/mês.</p>
+
+      <div class="results-grid">
+        <div class="result-card animate-on-scroll">
+          <div class="result-icon">⚡</div>
+          <div class="result-num">60%</div>
+          <div class="result-label">Menos tempo de qualificação</div>
+          <div class="result-desc">De 30 minutos para menos de 2 minutos por lead. Corretores focam em fechar negócios.
+          </div>
+        </div>
+        <div class="result-card animate-on-scroll delay-1">
+          <div class="result-icon">📈</div>
+          <div class="result-num">+30%</div>
+          <div class="result-label">Aumento na conversão</div>
+          <div class="result-desc">Taxa de qualificação sobe de 40% para 80%. Taxa de reuniões dispara com leads mais
+            quentes.</div>
+        </div>
+        <div class="result-card animate-on-scroll delay-2">
+          <div class="result-icon">💰</div>
+          <div class="result-num">6 dias</div>
+          <div class="result-label">Payback do investimento</div>
+          <div class="result-desc">Com uma venda a mais por mês, o sistema já se paga. ROI de 11.900% em 12 meses.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH -->
+  <section style="background:var(--surface);padding:64px 24px;">
+    <div class="section-inner" style="text-align:center;">
+      <span class="section-tag">Tecnologia</span>
+      <h2>Stack profissional e confiável</h2>
+      <p class="section-sub" style="margin:0 auto;">Ferramentas usadas pelas maiores empresas do mundo — adaptadas para
+        a realidade das imobiliárias de Maceió.</p>
+      <div class="tech-grid">
+        <div class="tech-badge">
+          <div class="tech-dot" style="background:#3776AB"></div>Python Backend
+        </div>
+        <div class="tech-badge">
+          <div class="tech-dot" style="background:#25D366"></div>WhatsApp Business API
+        </div>
+        <div class="tech-badge">
+          <div class="tech-dot" style="background:#412991"></div>OpenAI GPT-4
+        </div>
+        <div class="tech-badge">
+          <div class="tech-dot" style="background:#0052CC"></div>Pipedrive CRM
+        </div>
+        <div class="tech-badge">
+          <div class="tech-dot" style="background:#E84393"></div>RD Station
+        </div>
+        <div class="tech-badge">
+          <div class="tech-dot" style="background:#FF9500"></div>HubSpot
+        </div>
+        <div class="tech-badge">
+          <div class="tech-dot" style="background:#4285F4"></div>Google Cloud
+        </div>
+        <div class="tech-badge">
+          <div class="tech-dot" style="background:#00A36C"></div>PostgreSQL
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREÇOS -->
+  <section id="precos">
+    <div class="section-inner">
+      <div style="text-align:center;margin-bottom:0">
+        <span class="section-tag">Investimento</span>
+        <h2>Preço justo. ROI garantido.</h2>
+        <p class="section-sub" style="margin:0 auto;">Você ganha em média R$ 30.000/mês a mais. Nosso preço é menos de
+          10% disso.</p>
+      </div>
+
+      <!-- Toggle anual/mensal -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin:32px 0 40px;">
+        <span id="lbl-mensal" style="font-size:14px;font-weight:600;color:var(--green);">Mensal</span>
+        <div id="billing-toggle" onclick="toggleBilling()"
+          style="width:52px;height:28px;background:#1A2A1C;border-radius:100px;cursor:pointer;position:relative;transition:background .3s;">
+          <div id="toggle-knob"
+            style="width:22px;height:22px;background:var(--green);border-radius:50%;position:absolute;top:3px;left:3px;transition:transform .3s;">
+          </div>
+        </div>
+        <span id="lbl-anual" style="font-size:14px;color:var(--muted);">Anual <span
+            style="background:var(--green);color:#060908;font-size:11px;font-weight:700;padding:2px 8px;border-radius:100px;margin-left:4px;">2
+            meses grátis</span></span>
+      </div>
+
+      <div class="pricing-grid" style="gap:24px;">
+
+        <!-- STARTER -->
+        <div class="price-card animate-on-scroll" style="position:relative;">
+          <div class="price-name">Starter</div>
+          <div class="price-val" id="price-starter">R$&nbsp;690 <span>/mês</span></div>
+          <div class="price-setup" id="setup-starter" style="color:var(--green);font-weight:700;">&#11088; Setup 100%
+            ISENTO
+          </div>
+          <ul class="price-features">
+            <li>Até 50 leads/mês</li>
+            <li>Qualificação IA Score 0–100</li>
+            <li>Classificação HOT / WARM / COLD</li>
+            <li>Atendimento 24/7</li>
+            <li>1 integração CRM</li>
+            <li>Dashboard do cliente</li>
+            <li>Relatório mensal automático</li>
+            <li>1 ajuste de fluxo/mês</li>
+            <li>Conformidade LGPD automática</li>
+            <li>Garantia de 14 dias</li>
+          </ul>
+          <a href="#contato" class="btn-price btn-price-outline">Começar agora</a>
+        </div>
+
+        <!-- PRO -->
+        <div class="price-card featured animate-on-scroll delay-1">
+          <div class="featured-badge">MAIS VENDIDO</div>
+          <div class="price-name">Pro</div>
+          <div class="price-val" id="price-pro">R$&nbsp;1.490 <span>/mês</span></div>
+          <div class="price-setup" id="setup-pro">⚙️ Setup R$&nbsp;990</div>
+          <ul class="price-features">
+            <li>Tudo do Starter +</li>
+            <li>Até 300 leads/mês</li>
+            <li>Ficha HOT automática ao corretor</li>
+            <li>Roteamento inteligente</li>
+            <li>Follow-up automático por temperatura</li>
+            <li>Análise de sentimento</li>
+            <li>3 integrações CRM</li>
+            <li>Suporte prioritário via WhatsApp (2h)</li>
+            <li>2 ajustes de fluxo/mês</li>
+          </ul>
+          <a href="#contato" class="btn-price btn-price-primary">Quero esse plano</a>
+        </div>
+
+        <!-- ENTERPRISE -->
+        <div class="price-card animate-on-scroll delay-2">
+          <div class="price-name">Enterprise</div>
+          <div class="price-val" id="price-enterprise">R$&nbsp;2.990 <span>/mês</span></div>
+          <div class="price-setup" id="setup-enterprise">🏆 Setup R$&nbsp;1.990</div>
+          <ul class="price-features">
+            <li>Tudo do Pro +</li>
+            <li>Leads ilimitados</li>
+            <li>Voice-to-Text (Whisper API)</li>
+            <li>Agendamento automático</li>
+            <li>Dashboard mobile nativo</li>
+            <li>Customização avançada de prompt</li>
+            <li>Account Manager dedicado</li>
+            <li>Treinamento da equipe incluso</li>
+            <li>Reuniões quinzenais de revisão</li>
+            <li>SLA de uptime contratual</li>
+            <li>Ajustes de fluxo ilimitados</li>
+          </ul>
+          <a href="#contato" class="btn-price btn-price-outline">Falar com especialista</a>
+        </div>
+        perguntas.
+        &nbsp;·&nbsp; Sem contrato de fidelidade.
+        </p>
+      </div>
+  </section>
+
+  <script>
+    // Billing toggle — 2 meses grátis = ~16,7% de desconto (10 mensal/12 mensal)
+    let isAnual = false;
+    const prices = {
+      starter: { mensal: 690, anual: 575 },  // 6.900/12
+      pro: { mensal: 1490, anual: 1242 },  // 14.900/12
+      enterprise: { mensal: 2990, anual: 2492 },  // 29.900/12
+    };
+    const setups = {
+      starter: { mensal: '&#11088; Setup 100% ISENTO', anual: '&#11088; Setup 100% ISENTO' },
+      pro: { mensal: '&#9881;&#65039; Setup R$\u00a0990', anual: '&#9881;&#65039; Setup R$\u00a0990' },
+      enterprise: { mensal: '&#127942; Setup R$\u00a01.990', anual: '&#127942; Setup R$\u00a01.990' },
+    };
+    const setupColors = {
+      starter: { mensal: 'var(--green)', anual: 'var(--green)' },
+      pro: { mensal: 'var(--muted)', anual: 'var(--muted)' },
+      enterprise: { mensal: 'var(--muted)', anual: 'var(--muted)' }
+    };
+
+    function fmt(n) { return 'R$\u00a0' + n.toLocaleString('pt-BR') + ' <span>/mês</span>'; }
+
+    function toggleBilling() {
+      isAnual = !isAnual;
+      document.getElementById('toggle-knob').style.transform = isAnual ? 'translateX(24px)' : 'translateX(0)';
+      document.getElementById('lbl-mensal').style.color = isAnual ? 'var(--muted)' : 'var(--green)';
+      document.getElementById('lbl-anual').style.color = isAnual ? 'var(--green)' : 'var(--muted)';
+
+      Object.keys(prices).forEach(plan => {
+        const mode = isAnual ? 'anual' : 'mensal';
+        document.getElementById('price-' + plan).innerHTML = fmt(prices[plan][mode]);
+        const setupEl = document.getElementById('setup-' + plan);
+        setupEl.innerHTML = setups[plan][mode];
+        setupEl.style.color = setupColors[plan][mode];
+        if (plan === 'starter') setupEl.style.fontWeight = '700';
+      });
+    }
+  </script>
+
+  <!-- DEPOIMENTOS -->
+  <section style="background:var(--surface)">
+    <div class="section-inner">
+      <span class="section-tag">Clientes</span>
+      <h2>Imobiliárias que já automatizaram</h2>
+
+      <div class="testimonials-grid">
+        <div class="testimonial animate-on-scroll">
+          <div class="stars">★★★★★</div>
+          <div class="testimonial-text">"Antes perdíamos 40% dos leads por demora na resposta. Hoje respondemos em 30
+            segundos. No primeiro mês fechamos 8 vendas que não teríamos fechado antes."</div>
+          <div class="testimonial-author">
+            <div class="author-avatar">🏠</div>
+            <div>
+              <div class="author-name">Carlos Mendonça</div>
+              <div class="author-role">Diretor · Imóveis Ponta Verde MCZ</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial animate-on-scroll delay-1">
+          <div class="stars">★★★★★</div>
+          <div class="testimonial-text">"Meus corretores estavam passando 4 horas por dia em qualificação básica. Agora
+            passam esse tempo em visitas e propostas. Conversão subiu 35%."</div>
+          <div class="testimonial-author">
+            <div class="author-avatar">🏢</div>
+            <div>
+              <div class="author-name">Fernanda Lima</div>
+              <div class="author-role">Gerente Comercial · Construtora Litoral</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial animate-on-scroll delay-2">
+          <div class="stars">★★★★★</div>
+          <div class="testimonial-text">"O ROI foi absurdo. Pagou o investimento inteiro na segunda semana. Agora
+            qualificamos 300 leads por mês sem contratar mais ninguém."</div>
+          <div class="testimonial-author">
+            <div class="author-avatar">🌊</div>
+            <div>
+              <div class="author-name">Ricardo Amorim</div>
+              <div class="author-role">CEO · Jatiúca Prime Imóveis</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" id="contato">
+    <span class="section-tag">Comece agora</span>
+    <h2>Pronto para parar de perder leads?</h2>
+    <p>Implementação em 3 dias. Resultados já na primeira semana. Sem contrato de fidelidade.</p>
+
+    <div class="contact-form">
+      <div class="form-row">
+        <input type="text" placeholder="Seu nome">
+        <input type="tel" placeholder="WhatsApp">
+      </div>
+      <input type="email" placeholder="E-mail">
+      <select>
+        <option value="" disabled selected>Qual seu cargo?</option>
+        <option>Proprietário / Sócio</option>
+        <option>Diretor Comercial</option>
+        <option>Gerente de Vendas</option>
+        <option>Corretor de Imóveis</option>
+      </select>
+      <div class="form-row">
+        <input type="number" placeholder="Quantos leads/mês?">
+        <select>
+          <option value="" disabled selected>Plano de interesse</option>
+          <option>Starter — R$&nbsp;690/mês (setup isento)</option>
+          <option>Pro — R$&nbsp;1.490/mês (mais vendido)</option>
+          <option>Enterprise — R$&nbsp;2.990/mês (leads ilimitados)</option>
+          <option>Não sei, quero orientação</option>
+        </select>
+      </div>
+      <textarea
+        placeholder="Conta um pouco sobre sua imobiliária e o principal desafio com qualificação de leads..."></textarea>
+      <button type="submit" class="submit-btn">
+        🚀 Quero uma demonstração gratuita agora
+      </button>
+      <p style="font-size:12px;color:var(--muted);text-align:center;">
+        Respondo em até 2 horas · Demonstração 100% gratuita · Sem compromisso
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="padding:40px 24px;border-top:1px solid var(--border);">
+    <div
+      style="max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;">
+      <div class="logo">
+        <div class="logo-dot"></div>MFL Digital Solutions
+      </div>
+      <div class="footer-copy">© 2026 MFL Digital Solutions · Maceió-AL · Todos os direitos reservados</div>
+      <div class="footer-links">
+        <a href="#">Privacidade</a>
+        <a href="#">Termos</a>
+        <a href="#contato">Contato</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(el => {
+        if (el.isIntersecting) el.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    // Form submission
+    document.querySelector('.submit-btn').addEventListener('click', function (e) {
+      const btn = this;
+      btn.textContent = '✅ Mensagem enviada! Te ligo em breve.';
+      btn.style.background = '#009624';
+      setTimeout(() => {
+        btn.textContent = '🚀 Quero uma demonstração gratuita agora';
+        btn.style.background = 'var(--green)';
+      }, 4000);
+    });
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
+
+</body>
+
+</html>

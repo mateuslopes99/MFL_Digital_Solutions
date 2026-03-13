@@ -1,0 +1,204 @@
+/* ── Design System MFL — igual ao site comercial ─────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --green: #00C853;
+  --green-dark: #009624;
+  --green-glow: rgba(0, 200, 83, 0.18);
+  --black: #080C0A;
+  --surface: #0E1410;
+  --surface2: #141A15;
+  --border: rgba(0, 200, 83, 0.15);
+  --border2: #1A2A1C;
+  --text: #E8F0EA;
+  --muted: #7A917E;
+  --white: #ffffff;
+  --red: #FF5252;
+  --yellow: #FFD600;
+  --blue: #2196F3;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--black);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tipografia base ─────────────────────────────────────────────────────── */
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--white);
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ── Scrollbar estilizada ────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--black);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1A2A1C;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--green);
+}
+
+/* ── Animações suaves ────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(0, 200, 83, 0);
+  }
+}
+
+/* ── Classes Utilitárias Responsivas ──────────────────────────────────────── */
+
+/* Grids */
+.dashboard-grid-2,
+.dashboard-grid-3,
+.dashboard-grid-4,
+.dashboard-grid-5,
+.dashboard-grid-6 {
+  display: grid;
+  gap: 16px;
+}
+
+.dashboard-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.dashboard-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.dashboard-grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.dashboard-grid-5 {
+  grid-template-columns: 2fr 1fr 1fr 1fr 120px;
+}
+
+/* Leads table */
+.dashboard-grid-6 {
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 140px;
+}
+
+/* Admin clients table */
+
+@media (max-width: 1024px) {
+  .dashboard-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+
+  .dashboard-grid-2,
+  .dashboard-grid-3,
+  .dashboard-grid-4 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Conversão da tabela 5 colunas para mobie */
+  .dashboard-grid-5,
+  .dashboard-grid-6 {
+    display: flex;
+    flex-direction: column;
+    padding: 16px !important;
+    gap: 12px;
+  }
+
+  .dashboard-grid-5>div,
+  .dashboard-grid-6>div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  /* Abas com scroll horizontal mobile suave */
+  .mobile-tabs {
+    padding: 0 16px !important;
+  }
+
+  /* Ocultar labels de cabeçalho na lista (para mobie) */
+  .hide-mobile {
+    display: none !important;
+  }
+
+  /* Flex direction e margins */
+  .flex-col-mobile {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .w-full-mobile {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  .p-mobile {
+    padding: 20px 16px !important;
+  }
+}

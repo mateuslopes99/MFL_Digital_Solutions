@@ -1,0 +1,8 @@
+﻿
+C:\Users\lenov\MFL_Digital_Solutions\frontend\app\src\pages\DashboardCliente.jsx
+    6:15  error  'fmtBRL' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                             no-unused-vars
+    6:23  error  'fmtPct' is defined but never used. Allowed unused vars must match /^[A-Z_]/u                             no-unused-vars
+  181:10  error  'showRecommendationDetail' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+Ô£û 3 problems (3 errors, 0 warnings)
+

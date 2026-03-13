@@ -1,0 +1,28 @@
+# MFL Digital Solutions — Dependências Python
+# Gerado em: 06/03/2026
+# Instalar: pip install -r requirements.txt
+
+# ── Web Framework ───────────────────────────────────────
+Flask==3.0.0
+Flask-Cors==4.0.0
+Flask-Limiter==4.1.1
+
+# ── Servidor WSGI (produção) ────────────────────────────
+waitress==3.0.2
+
+# ── Banco de Dados ──────────────────────────────────────
+psycopg2-binary>=2.9.9   # PostgreSQL (produção Railway/Supabase)
+# sqlite3 já vem no Python nativo (dev local)
+
+# ── Scheduler (follow-ups automáticos) ─────────────────
+APScheduler==3.11.2
+
+# ── IA ──────────────────────────────────────────────────
+openai==2.15.0
+
+# ── WhatsApp ────────────────────────────────────────────
+twilio==9.10.2           # mantido para compatibilidade enterprise
+requests==2.32.5         # Evolution API (HTTP)
+
+# ── Utilitários ─────────────────────────────────────────
+python-dotenv==1.2.1

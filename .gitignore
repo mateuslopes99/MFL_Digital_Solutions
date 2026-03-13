@@ -1,0 +1,41 @@
+# ── Python ────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Ambiente local ────────────────────────────────────
+backend/.env
+.env
+*.env
+
+# ── Banco de dados local ──────────────────────────────
+backend/data/
+*.db
+*.sqlite3
+
+# ── Node / React ──────────────────────────────────────
+node_modules/
+frontend/app/dist/
+frontend/app/.vite/
+.npm
+
+# ── IDEs ─────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Sistema operacional ───────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs ─────────────────────────────────────────────
+*.log
+logs/

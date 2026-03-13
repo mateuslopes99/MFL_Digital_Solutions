@@ -1,0 +1,10 @@
+﻿
+C:\Users\lenov\MFL_Digital_Solutions\frontend\app\src\pages\DashboardAdmin.jsx
+   6:15  error  'healthColor' is defined but never used. Allowed unused vars must match /^[A-Z_]/u           no-unused-vars
+   6:28  error  'statusLabel' is defined but never used. Allowed unused vars must match /^[A-Z_]/u           no-unused-vars
+  48:11  error  'user' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u         no-unused-vars
+  63:32  error  'overview' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u     no-unused-vars
+  63:51  error  'dataLoading' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+Ô£û 5 problems (5 errors, 0 warnings)
+

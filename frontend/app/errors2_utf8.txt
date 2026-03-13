@@ -1,0 +1,9 @@
+﻿
+C:\Users\lenov\MFL_Digital_Solutions\frontend\app\src\pages\DashboardAdmin.jsx
+  351:52  error  Parsing error: Expecting Unicode escape sequence \uXXXX
+
+C:\Users\lenov\MFL_Digital_Solutions\frontend\app\src\pages\DashboardCliente.jsx
+  344:55  error  Parsing error: Expecting Unicode escape sequence \uXXXX
+
+Ô£û 2 problems (2 errors, 0 warnings)
+
