@@ -152,20 +152,21 @@ def create_app():
     return app
 
 
-# ── Ponto de entrada ───────────────────────────────────────────────────────────
+# ── Inicialização Global para WSGI (Produção) ──────────────────────────────────
+app = create_app()
+
+from database import init_db
+init_db()
+
+from modules.followup import start_scheduler, stop_scheduler
+start_scheduler()
+
+import atexit
+atexit.register(stop_scheduler)
+
+
+# ── Ponto de entrada (Desenvolvimento) ─────────────────────────────────────────
 if __name__ == "__main__":
-    from database import init_db
-    init_db()
-
-    application = create_app()
-
-    # ── Iniciar scheduler de follow-ups ───────────────────────────────────
-    from modules.followup import start_scheduler, stop_scheduler
-    start_scheduler()
-
-    import atexit
-    atexit.register(stop_scheduler)
-
     port = int(os.getenv("FLASK_PORT", 5000))
     print("=" * 52)
     print("  MFL Digital Solutions — Servidor v2")
@@ -175,8 +176,9 @@ if __name__ == "__main__":
     print(f"  CORS:      {', '.join(ALLOWED_ORIGINS)}")
     print("=" * 52)
 
-    application.run(
+    app.run(
         host="0.0.0.0",
         port=port,
         debug=_ENV == "development",
     )
+
