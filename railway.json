@@ -4,6 +4,6 @@
     "buildCommand": "cd backend && pip install -r requirements.txt"
   },
   "deploy": {
-    "startCommand": "cd backend && waitress-serve --port=$PORT app:app"
+    "startCommand": "cd backend && waitress-serve --port=${PORT:-5000} app:app"
   }
 }
