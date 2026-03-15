@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://mfldigitalsolutions-production.up.railway.app/api/$1" },
+    { "source": "/webhook/(.*)", "destination": "https://mfldigitalsolutions-production.up.railway.app/webhook/$1" },
+    { "source": "/logo/(.*)", "destination": "https://mfldigitalsolutions-production.up.railway.app/logo/$1" },
+    { "source": "/favicon.ico", "destination": "/app/dist/vite.svg" },
+    { "source": "/login", "destination": "/login/login.html" },
+    { "source": "/", "destination": "/landing/index.html" },
+    { "source": "/assets/(.*)", "destination": "/app/dist/assets/$1" },
+    { "source": "/(.*)", "destination": "/app/dist/index.html" }
+  ]
+}
