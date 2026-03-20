@@ -18,7 +18,7 @@ psycopg2-binary>=2.9.9   # PostgreSQL (produção Railway/Supabase)
 APScheduler==3.11.2
 
 # ── IA ──────────────────────────────────────────────────
-openai==2.15.0
+openai>=1.35.0
 
 # ── WhatsApp ────────────────────────────────────────────
 twilio==9.10.2           # mantido para compatibilidade enterprise

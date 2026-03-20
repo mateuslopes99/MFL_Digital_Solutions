@@ -19,6 +19,10 @@ dashboard_bp = Blueprint("dashboard", __name__)
 @dashboard_bp.route("/admin/overview", methods=["GET"])
 def admin_overview():
     """Retorna visão geral para o dashboard admin."""
+    user = session.get("user")
+    if not user or user.get("role") != "admin":
+        return jsonify({"error": "Acesso restrito ao administrador"}), 403
+
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -94,6 +98,13 @@ def admin_overview():
 @dashboard_bp.route("/client/<int:client_id>/overview", methods=["GET"])
 def client_overview(client_id):
     """Retorna métricas enriquecidas para o dashboard do cliente."""
+    user = session.get("user")
+    if not user:
+        return jsonify({"error": "Não autenticado"}), 401
+    # Clientes só podem ver seus próprios dados; admin pode ver qualquer um
+    if user.get("role") == "client" and user.get("client_id") != client_id:
+        return jsonify({"error": "Acesso negado"}), 403
+
     conn = get_connection()
     cursor = conn.cursor()
 

@@ -39,3 +39,15 @@ desktop.ini
 # ── Logs ─────────────────────────────────────────────
 *.log
 logs/
+
+# ── Segurança (nunca commitar chaves ou scripts temporários) ──
+*.pem
+*.key
+*.secret
+backend/create_first_client.py
+backend/add_demo_client.py
+backend/migrate_to_postgres.py
+backend/check_db.py
+backend/test_openai.py
+backend/test_flow.py
+backend/serve.py

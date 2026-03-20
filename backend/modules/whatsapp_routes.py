@@ -206,7 +206,16 @@ def test_webhook():
     """
     Endpoint de teste — simula recebimento de mensagem sem Twilio.
     Body JSON: { "message": "...", "save": true/false, "client_id": 1 }
+    Protegido por WEBHOOK_SECRET para evitar injeção de dados em produção.
     """
+    # Verificação de segurança: requer token secreto no header ou no body
+    secret = os.getenv("WEBHOOK_SECRET", "")
+    if secret:
+        provided = request.headers.get("X-Webhook-Secret", "") or (request.get_json() or {}).get("secret", "")
+        if not hmac.compare_digest(provided, secret):
+            print("[SECURITY] /whatsapp/test bloqueado: token inválido")
+            return jsonify({"error": "Não autorizado"}), 403
+
     data = request.get_json()
     if not data or "message" not in data:
         return jsonify({"error": "Campo 'message' obrigatório"}), 400
