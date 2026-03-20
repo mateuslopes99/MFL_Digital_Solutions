@@ -26,3 +26,4 @@ requests==2.32.5         # Evolution API (HTTP)
 
 # ── Utilitários ─────────────────────────────────────────
 python-dotenv==1.2.1
+bcrypt>=4.1.0

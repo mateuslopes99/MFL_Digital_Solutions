@@ -150,39 +150,46 @@ def _process_lead_followup(lead: dict, now: datetime):
 
     # ── 🔥 HOT ────────────────────────────────────────────────────────────────
     if tag == "hot":
-        if status == "new" and 30 <= minutes_since < 240:
-            notify_admin  = True
-            followup_type = _FOLLOWUP_HOT_30MIN
-            notif_msg     = _HOT_ESCALATION.format(phone=phone, score=score, summary=summary)
-            new_status    = "contacted"
-            logger.info(f"[FOLLOWUP] HOT 30min: lead {lead_id}")
+        if status == "new" and minutes_since >= 30:
+            if not _check_followup_sent(lead_id, _FOLLOWUP_HOT_30MIN):
+                notify_admin  = True
+                followup_type = _FOLLOWUP_HOT_30MIN
+                notif_msg     = _HOT_ESCALATION.format(phone=phone, score=score, summary=summary)
+                new_status    = "contacted"
+                logger.info(f"[FOLLOWUP] HOT 30min: lead {lead_id}")
 
         elif hours_since >= 4 and status == "contacted":
-            notify_admin  = True
-            followup_type = _FOLLOWUP_HOT_ESCALATE
-            notif_msg = (
-                f"🚨 *LEAD HOT PERDENDO TEMPERATURA!*\n\n"
-                f"Lead ID: {lead_id}\nTelefone: {phone}\n"
-                f"Score: {score}/100\nHoras sem contato: {int(hours_since)}h\n\n"
-                f"Ação imediata necessária."
-            )
-            logger.warning(f"[FOLLOWUP] HOT ignorado há {int(hours_since)}h")
+            if not _check_followup_sent(lead_id, _FOLLOWUP_HOT_ESCALATE):
+                notify_admin  = True
+                followup_type = _FOLLOWUP_HOT_ESCALATE
+                notif_msg = (
+                    f"🚨 *LEAD HOT PERDENDO TEMPERATURA!*\n\n"
+                    f"Lead ID: {lead_id}\nTelefone: {phone}\n"
+                    f"Score: {score}/100\nHoras sem contato: {int(hours_since)}h\n\n"
+                    f"Ação imediata necessária."
+                )
+                logger.warning(f"[FOLLOWUP] HOT ignorado há {int(hours_since)}h")
 
     # ── 🌡 WARM ───────────────────────────────────────────────────────────────
     elif tag == "warm":
-        if 22 <= hours_since <= 26 and status == "new":
-            msg_to_send = _WARM_24H;  new_status = "contacted"; followup_type = _FOLLOWUP_WARM_24H
-        elif 70 <= hours_since <= 74 and status == "contacted":
-            msg_to_send = _WARM_72H;  followup_type = _FOLLOWUP_WARM_72H
-        elif 6.5 <= days_since <= 7.5:
-            msg_to_send = _WARM_7D;   new_status = "lost"; followup_type = _FOLLOWUP_WARM_7D
+        if hours_since >= 22 and status == "new":
+            if not _check_followup_sent(lead_id, _FOLLOWUP_WARM_24H):
+                msg_to_send = _WARM_24H;  new_status = "contacted"; followup_type = _FOLLOWUP_WARM_24H
+        elif hours_since >= 70 and status == "contacted":
+            if not _check_followup_sent(lead_id, _FOLLOWUP_WARM_72H):
+                msg_to_send = _WARM_72H;  followup_type = _FOLLOWUP_WARM_72H
+        elif days_since >= 6.5:
+            if not _check_followup_sent(lead_id, _FOLLOWUP_WARM_7D):
+                msg_to_send = _WARM_7D;   new_status = "lost"; followup_type = _FOLLOWUP_WARM_7D
 
     # ── ❄️ COLD ───────────────────────────────────────────────────────────────
     elif tag == "cold":
-        if 2.8 <= days_since <= 3.2 and status == "new":
-            msg_to_send = _COLD_3D;   new_status = "contacted"; followup_type = _FOLLOWUP_COLD_3D
-        elif 9.5 <= days_since <= 10.5:
-            msg_to_send = _COLD_10D;  new_status = "lost"; followup_type = _FOLLOWUP_COLD_10D
+        if days_since >= 2.8 and status == "new":
+            if not _check_followup_sent(lead_id, _FOLLOWUP_COLD_3D):
+                msg_to_send = _COLD_3D;   new_status = "contacted"; followup_type = _FOLLOWUP_COLD_3D
+        elif days_since >= 9.5:
+            if not _check_followup_sent(lead_id, _FOLLOWUP_COLD_10D):
+                msg_to_send = _COLD_10D;  new_status = "lost"; followup_type = _FOLLOWUP_COLD_10D
 
     # ── Executar e logar ──────────────────────────────────────────────────────
     if msg_to_send and followup_type:
@@ -198,9 +205,19 @@ def _process_lead_followup(lead: dict, now: datetime):
                          model_used=f"followup_{followup_type}")
 
     if notify_admin and notif_msg and followup_type:
-        _notify_mfl_admin(notif_msg)
-        log_followup(lead_id=lead_id, client_id=client_id,
-                     followup_type=followup_type, status="sent", provider="admin_alert")
+        # Notifica o corretor do cliente (do banco), fallback ao admin da MFL
+        agent_wa = _get_agent_for_client(client_id)
+        if agent_wa:
+            from modules.whatsapp_sender import send_message, WHATSAPP_PROVIDER as _WP
+            result = send_message(agent_wa, notif_msg)
+            status_log = "simulated" if result.get("simulated") else (
+                         "sent" if result["success"] else "failed")
+            log_followup(lead_id=lead_id, client_id=client_id,
+                         followup_type=followup_type, status=status_log, provider="corretor_alert")
+        else:
+            _notify_mfl_admin(notif_msg)
+            log_followup(lead_id=lead_id, client_id=client_id,
+                         followup_type=followup_type, status="sent", provider="admin_alert")
 
     if new_status:
         cursor.execute(
@@ -232,6 +249,49 @@ def _notify_mfl_admin(message: str):
         send_message(admin_wa, message)
     except Exception as e:
         logger.error(f"[FOLLOWUP] Erro ao notificar admin: {e}")
+
+
+def _check_followup_sent(lead_id: int, followup_type: str) -> bool:
+    """
+    Verifica se um tipo de follow-up já foi enviado para este lead.
+    Garante idempotência: mesmo que o scheduler rode múltiplas vezes,
+    o follow-up só é disparado uma vez.
+    """
+    try:
+        from database import get_connection
+        conn   = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT id FROM followup_log WHERE lead_id = ? AND followup_type = ? AND status IN ('sent', 'simulated') LIMIT 1",
+            (lead_id, followup_type)
+        )
+        result = cursor.fetchone()
+        conn.close()
+        return result is not None
+    except Exception:
+        return False  # Em caso de erro, permite envio (preferível a bloquear)
+
+
+def _get_agent_for_client(client_id: int) -> str | None:
+    """
+    Retorna o WhatsApp do corretor ativo cadastrado para o cliente.
+    Fallback para variável de ambiente MFL_ADMIN_WHATSAPP se não houver agente.
+    """
+    try:
+        from database import get_connection
+        conn   = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT whatsapp FROM agents WHERE client_id = ? AND active = 1 ORDER BY id ASC LIMIT 1",
+            (client_id,)
+        )
+        row = cursor.fetchone()
+        conn.close()
+        if row and row["whatsapp"]:
+            return row["whatsapp"]
+    except Exception as e:
+        logger.error(f"[FOLLOWUP] Erro ao buscar agente do cliente {client_id}: {e}")
+    return os.getenv("MFL_ADMIN_WHATSAPP", "")  # fallback
 
 
 def _get_client_whatsapp(client_id: int) -> str | None:

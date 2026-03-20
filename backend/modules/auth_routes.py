@@ -3,23 +3,49 @@ MFL Digital Solutions — Autenticação
 ======================================
 Login para Admin (credenciais no .env) e Clientes (DB).
 Usa sessão Flask com cookie HttpOnly.
+Senhas protegidas com bcrypt (salt automático).
+Retrocompatível com hashes SHA-256 antigos.
 """
 
 import os
 import hashlib
 import sys
+import logging
 from flask import Blueprint, request, jsonify, session
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from database import get_connection
 
-auth_bp = Blueprint("auth", __name__)
+auth_bp  = Blueprint("auth", __name__)
+logger   = logging.getLogger(__name__)
 
 
-# ── Utilitário ─────────────────────────────────────────────────────────────────
+# ── Utilitários de senha ──────────────────────────────────────────────────────
 
 def hash_password(password: str) -> str:
-    return hashlib.sha256(password.encode("utf-8")).hexdigest()
+    """Gera hash bcrypt com salt (seguro contra rainbow tables)."""
+    try:
+        import bcrypt
+        return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+    except ImportError:
+        # Fallback SHA-256 se bcrypt não instalado (nunca deve ocorrer em produção)
+        logger.warning("[AUTH] bcrypt não disponível — usando SHA-256 (install bcrypt!)")
+        return hashlib.sha256(password.encode("utf-8")).hexdigest()
+
+
+def verify_password(password: str, stored_hash: str) -> bool:
+    """
+    Verifica senha contra hash armazenado.
+    Aceita tanto bcrypt (novo) quanto SHA-256 (retrocompatibilidade).
+    """
+    try:
+        import bcrypt
+        if stored_hash.startswith("$2b$") or stored_hash.startswith("$2a$"):
+            return bcrypt.checkpw(password.encode("utf-8"), stored_hash.encode("utf-8"))
+    except ImportError:
+        pass
+    # Fallback: hash SHA-256 (formato antigo)
+    return stored_hash == hashlib.sha256(password.encode("utf-8")).hexdigest()
 
 
 def check_admin_credentials(username: str, password: str) -> bool:
@@ -75,7 +101,23 @@ def login():
         except Exception as e:
             return jsonify({"success": False, "error": f"Erro no banco: {str(e)}"}), 500
 
-        if client and client["password_hash"] == hash_password(password):
+        if client and verify_password(password, client["password_hash"] or ""):
+            # Migração automática: se o hash antigo (SHA-256), re-hasheamos para bcrypt
+            try:
+                import bcrypt
+                old_hash = client["password_hash"] or ""
+                if not (old_hash.startswith("$2b$") or old_hash.startswith("$2a$")):
+                    new_hash = hash_password(password)
+                    mig_conn = get_connection()
+                    mig_cur  = mig_conn.cursor()
+                    mig_cur.execute("UPDATE clients SET password_hash = ? WHERE id = ?",
+                                    (new_hash, client["id"]))
+                    mig_conn.commit()
+                    mig_conn.close()
+                    logger.info("[AUTH] Hash migrado para bcrypt: user=%s", username)
+            except Exception:
+                pass
+        if client and verify_password(password, client["password_hash"] or ""):
             session.permanent = True
             session["user"] = {
                 "username":  username,
@@ -135,7 +177,7 @@ def change_password():
     )
     row = cursor.fetchone()
 
-    if not row or row["password_hash"] != hash_password(current):
+    if not row or not verify_password(current, row["password_hash"] or ""):
         conn.close()
         return jsonify({"error": "Senha atual incorreta"}), 401
 

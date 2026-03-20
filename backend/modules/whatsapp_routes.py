@@ -304,12 +304,16 @@ def receive_whatsapp_evolution():
     payload = request.get_json(silent=True) or {}
 
     # ── Validação da chave de API da Evolution API ─────────────────────────────
-    evolution_key = os.getenv("EVOLUTION_API_KEY", "")
+    evolution_key = os.getenv("EVOLUTION_API_KEY", "").strip()
     if evolution_key:
-        req_key = request.headers.get("apikey", "") or request.headers.get("Authorization", "")
-        if req_key and req_key != evolution_key:
-            print("[SECURITY] Evolution webhook rejeitado: API key inválida")
+        req_key = (
+            request.headers.get("apikey", "") or
+            request.headers.get("Authorization", "")
+        ).strip()
+        if not hmac.compare_digest(req_key, evolution_key):
+            print("[SECURITY] Evolution webhook rejeitado: API key inválida ou ausente")
             return jsonify({"error": "Unauthorized"}), 403
+
 
     # ── Parse do payload Evolution API ────────────────────────────────────────
     event = payload.get("event", "")
