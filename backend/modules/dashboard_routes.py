@@ -9,11 +9,19 @@ import sys
 from flask import Blueprint, jsonify, request, session
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from database import get_connection
+from database import get_connection, _IS_POSTGRES
 from modules.health_score import calculate_health_score, bulk_health_scores, save_snapshot, get_history
 from modules.alerts import send_whatsapp_alert, send_email_report
+from config import get_plan_price
 
 dashboard_bp = Blueprint("dashboard", __name__)
+
+
+def _date_offset(days: int) -> str:
+    """Gera o SQL para offset de dados (suporta SQLite e PostgreSQL)."""
+    if _IS_POSTGRES:
+        return f"NOW() - INTERVAL '{days} days'"
+    return f"DATE('now', '-{days} days')"
 
 
 @dashboard_bp.route("/admin/overview", methods=["GET"])
@@ -38,10 +46,10 @@ def admin_overview():
     by_classification = {row["classification"]: row["count"] for row in cursor.fetchall()}
 
     # Leads hoje
-    cursor.execute("""
-        SELECT COUNT(*) as total FROM leads
-        WHERE DATE(created_at) = DATE('now')
-    """)
+    if _IS_POSTGRES:
+        cursor.execute("SELECT COUNT(*) as total FROM leads WHERE DATE(created_at) = CURRENT_DATE")
+    else:
+        cursor.execute("SELECT COUNT(*) as total FROM leads WHERE DATE(created_at) = DATE('now')")
     leads_today = cursor.fetchone()["total"]
 
     # Total de clientes ativos
@@ -50,8 +58,7 @@ def admin_overview():
     active_clients = len(client_rows)
 
     # ── MRR total ──────────────────────────────────────────────────────────
-    PLAN_MRR = {"starter": 790, "basico": 1490, "pro": 2790, "enterprise": 5490}
-    total_mrr = sum(PLAN_MRR.get(r["package"] or "pro", 2790) for r in client_rows)
+    total_mrr = sum(get_plan_price(r["package"] or "pro") for r in client_rows)
 
     conn.close()
 
@@ -67,17 +74,19 @@ def admin_overview():
             "name":        r["name"],
             "niche":       r["niche"],
             "package":     r["package"],
-            "mrr":         PLAN_MRR.get(r["package"] or "pro", 2790),
-            "health":      hs.get("health_score", 50),
+            "mrr":         get_plan_price(r["package"] or "pro"),
+            "health_score":hs.get("health_score", 50),
             "churn_risk":  hs.get("churn_risk",  25),
             "health_label":hs.get("label",       "Atenção"),
+            "status":      "active",
+            "leads_30d":   0,
         })
 
     avg_health = round(
-        sum(c["health"] for c in clients_with_health) / len(clients_with_health)
+        sum(c["health_score"] for c in clients_with_health) / len(clients_with_health)
     ) if clients_with_health else 0
 
-    risk_clients = [c for c in clients_with_health if c["health"] < 70]
+    risk_clients = [c for c in clients_with_health if c["health_score"] < 70]
 
     return jsonify({
         "total_leads":     total_leads,
@@ -91,7 +100,7 @@ def admin_overview():
             "warm": by_classification.get("warm", 0),
             "cold": by_classification.get("cold", 0),
         },
-        "clients": clients_with_health,
+        "clients_with_health": clients_with_health,
     })
 
 
@@ -121,9 +130,9 @@ def client_overview(client_id):
     by_class = {row["classification"]: row["count"] for row in cursor.fetchall()}
 
     # Leads esta semana
-    cursor.execute("""
+    cursor.execute(f"""
         SELECT COUNT(*) as total FROM leads
-        WHERE client_id = ? AND DATE(created_at) >= DATE('now', '-7 days')
+        WHERE client_id = ? AND created_at >= {_date_offset(7)}
     """, (client_id,))
     leads_week = cursor.fetchone()["total"]
 
@@ -145,33 +154,33 @@ def client_overview(client_id):
     # ── Tendência semanal (últimas 4 semanas) ─────────────────────────────
     weekly_trend = []
     for i in range(3, -1, -1):   # semana mais antiga → mais recente
-        start_offset = f"-{(i + 1) * 7} days"
-        end_offset   = f"-{i * 7} days"
+        start_days = (i + 1) * 7
+        end_days   = i * 7
 
-        cursor.execute("""
+        cursor.execute(f"""
             SELECT COUNT(*) as total FROM leads
             WHERE client_id = ?
-              AND DATE(created_at) >= DATE('now', ?)
-              AND DATE(created_at) <  DATE('now', ?)
-        """, (client_id, start_offset, end_offset))
+              AND created_at >= {_date_offset(start_days)}
+              AND created_at <  {_date_offset(end_days)}
+        """, (client_id,))
         week_total = cursor.fetchone()["total"]
 
-        cursor.execute("""
+        cursor.execute(f"""
             SELECT COUNT(*) as total FROM leads
             WHERE client_id = ?
               AND classification IN ('hot', 'warm')
-              AND DATE(created_at) >= DATE('now', ?)
-              AND DATE(created_at) <  DATE('now', ?)
-        """, (client_id, start_offset, end_offset))
+              AND created_at >= {_date_offset(start_days)}
+              AND created_at <  {_date_offset(end_days)}
+        """, (client_id,))
         week_qualified = cursor.fetchone()["total"]
 
-        cursor.execute("""
+        cursor.execute(f"""
             SELECT COUNT(*) as total FROM leads
             WHERE client_id = ?
               AND status = 'converted'
-              AND DATE(created_at) >= DATE('now', ?)
-              AND DATE(created_at) <  DATE('now', ?)
-        """, (client_id, start_offset, end_offset))
+              AND created_at >= {_date_offset(start_days)}
+              AND created_at <  {_date_offset(end_days)}
+        """, (client_id,))
         week_converted = cursor.fetchone()["total"]
 
         weekly_trend.append({

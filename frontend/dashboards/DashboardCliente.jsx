@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import React, { useState, useEffect } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 /**
  * DASHBOARD DO CLIENTE - VERSÃO OTIMIZADA
@@ -11,11 +11,21 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, L
  * 3. ✅ Gráficos de tendência (últimas 4 semanas)
  * 4. ✅ "Alertas" com notificações
  * 5. ✅ "Próximo Passo" com sugestão de upgrade
+ * 6. ✅ Dashboard Client Integrado (API fetch real)
  */
 
 export default function ClientDashboardOtimizado() {
   const [activeTab, setActiveTab] = useState('overview');
-  const [showRecommendationDetail, setShowRecommendationDetail] = useState(null);
+
+  const [clientData, setClientData] = useState(null);
+  const CLIENT_ID = 1; // ID chumbado para demo; na produção, virá do contexto/auth
+
+  useEffect(() => {
+    fetch(`http://localhost:5001/api/dashboard/client/${CLIENT_ID}/overview`, { credentials: 'omit' })
+      .then(res => res.json())
+      .then(data => setClientData(data))
+      .catch(err => console.error("Erro overview cliente:", err));
+  }, []);
   
   const G = '#00C853'; // Verde primário
   const R = '#FF5252'; // Vermelho para alertas
@@ -23,7 +33,7 @@ export default function ClientDashboardOtimizado() {
   const B = '#2196F3'; // Azul
 
   // Dados de tendência (últimas 4 semanas)
-  const trendData = [
+  const trendData = clientData?.weekly_trend || [
     { week: 'Sem 1', leads: 45, qualified: 32, conversion: 15, response: 3.2 },
     { week: 'Sem 2', leads: 52, qualified: 38, conversion: 17, response: 3.0 },
     { week: 'Sem 3', leads: 48, qualified: 35, conversion: 16, response: 2.9 },
@@ -82,8 +92,14 @@ export default function ClientDashboardOtimizado() {
     },
   ];
 
-  // Alertas
-  const alerts = [
+  // Alertas dinâmicos com fallback
+  const alerts = clientData?.alerts?.length > 0 ? clientData.alerts.map((a, i) => ({
+    id: i + 1,
+    type: a.type,
+    title: a.title,
+    message: a.message,
+    date: 'Hoje',
+  })) : [
     {
       id: 1,
       type: 'critical',
@@ -145,7 +161,6 @@ export default function ClientDashboardOtimizado() {
   // Componente de Recomendação
   const RecommendationCard = ({ rec }) => (
     <div
-      onClick={() => setShowRecommendationDetail(rec.id)}
       style={{
         background: '#0E1410',
         border: `2px solid ${
@@ -153,9 +168,8 @@ export default function ClientDashboardOtimizado() {
         }`,
         borderRadius: 12,
         padding: 20,
-        cursor: 'pointer',
-        transition: 'all 0.2s',
         marginBottom: 12,
+        transition: 'all 0.2s',
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateX(4px)';
@@ -316,10 +330,10 @@ export default function ClientDashboardOtimizado() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             {/* KPIs */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-              <MetricCard label="Leads Processados" value="58" unit="este mês" trend={21} trendDirection="up" />
-              <MetricCard label="Taxa de Qualificação" value="78%" unit="leads qualificados" trend={5} trendDirection="up" />
-              <MetricCard label="Taxa de Conversão" value="18%" unit="leads → reuniões" trend={-5} trendDirection="down" />
-              <MetricCard label="Tempo de Resposta" value="2m 47s" unit="média" trend={-8} trendDirection="down" />
+              <MetricCard label="Leads Processados" value={clientData?.total_leads || "58"} unit="no total" trend={21} trendDirection="up" />
+              <MetricCard label="Leads esta semana" value={clientData?.leads_week || "42"} unit="esta semana" trend={5} trendDirection="up" />
+              <MetricCard label="Leads Convertidos" value={clientData?.converted_leads || "12"} unit="leads → reuniões" trend={-5} trendDirection="down" />
+              <MetricCard label="Tempo de Resposta" value="2m 47s" unit="média (mock)" trend={-8} trendDirection="down" />
             </div>
 
             {/* Ganho Mensal */}

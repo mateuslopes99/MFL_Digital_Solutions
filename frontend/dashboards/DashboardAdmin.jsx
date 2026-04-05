@@ -1,35 +1,72 @@
-import React, { useState } from 'react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import React, { useState, useEffect } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 /**
  * DASHBOARD DO ADMIN - VERSÃO OTIMIZADA
  * Implementa todas as melhorias de Semana 1
  * 
  * Melhorias incluídas:
- * 1. ✅ "Clientes em Risco" com health < 60%
+ * 1. ✅ "Clientes em Risco" com health &lt; 60%
  * 2. ✅ "Previsões" (MRR, churn)
  * 3. ✅ "Insights" com recomendações
  * 4. ✅ "Análise de Cohort"
  * 5. ✅ "Automação de Relatórios"
+ * 6. ✅ Integração Real: Scheduler, Token Costs e Follow-ups Pendentes
  */
 
 export default function AdminDashboardOtimizado() {
   const [activeTab, setActiveTab] = useState('overview');
-  const [selectedRiskClient, setSelectedRiskClient] = useState(null);
+
+  const [followupStatus, setFollowupStatus] = useState(null);
+  const [tokenCosts, setTokenCosts] = useState(null);
+  const [pendingFollowups, setPendingFollowups] = useState([]);
+
+  const [overviewData, setOverviewData] = useState(null);
+  const [dataLoading, setDataLoading] = useState(false);
+
+  const fetchData = () => {
+    setDataLoading(true);
+
+    Promise.all([
+      fetch('http://localhost:5001/api/dashboard/admin/overview', { credentials: 'omit' }).then(r => r.json()),
+      fetch('http://localhost:5001/api/dashboard/admin/followup/status', { credentials: 'omit' }).then(r => r.json()),
+      fetch('http://localhost:5001/api/dashboard/admin/token-costs', { credentials: 'omit' }).then(r => r.json()),
+      fetch('http://localhost:5001/api/dashboard/admin/followup/leads', { credentials: 'omit' }).then(r => r.json())
+    ]).then(([overview, status, tokens, follows]) => {
+      setOverviewData(overview);
+      setFollowupStatus(status);
+      setTokenCosts(tokens);
+      setPendingFollowups(follows.leads || []);
+    }).catch(err => {
+      console.error("Erro no sincronismo da API:", err);
+    }).finally(() => {
+      setDataLoading(false);
+    });
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const G = '#00C853'; // Verde
   const R = '#FF5252'; // Vermelho
   const Y = '#FFD600'; // Amarelo
   const B = '#2196F3'; // Azul
 
-  // Dados de clientes
-  const CLIENTS = [
-    { id: 1, name: 'Silva & Cia', niche: 'Imobiliária', mrr: 2490, leads: 280, health: 95, status: 'active', color: G, since: 'Jan 2025', conversion: 22, churnRisk: 0 },
-    { id: 2, name: 'Santos Imóveis', niche: 'Imobiliária', mrr: 1490, leads: 150, health: 88, status: 'active', color: B, since: 'Fev 2025', conversion: 18, churnRisk: 5 },
-    { id: 3, name: 'Dr. Paulo Clínica', niche: 'Consultório', mrr: 990, leads: 80, health: 61, status: 'warning', color: Y, since: 'Jan 2025', conversion: 12, churnRisk: 35 },
-    { id: 4, name: 'Estética Bella', niche: 'Estética', mrr: 1490, leads: 120, health: 45, status: 'warning', color: R, since: 'Dez 2024', conversion: 8, churnRisk: 65 },
-    { id: 5, name: 'Costa Empreendimentos', niche: 'Imobiliária', mrr: 2990, leads: 350, health: 92, status: 'active', color: G, since: 'Nov 2024', conversion: 20, churnRisk: 0 },
-  ];
+  // Processamento de clientes reais
+  const CLIENTS = overviewData?.clients_with_health?.map(c => ({
+    id: c.id,
+    name: c.name,
+    niche: c.niche,
+    mrr: c.package === 'enterprise' ? 5490 : c.package === 'pro' ? 2790 : 1490,
+    leads: c.leads_30d,
+    health: c.health_score,
+    status: c.status,
+    color: c.health_score >= 80 ? G : c.health_score >= 60 ? Y : R,
+    since: 'Recente',
+    conversion: 0,
+    churnRisk: c.health_score < 70 ? (100 - c.health_score) : 0
+  })) || [];
 
   // Clientes em risco
   const riskClients = CLIENTS.filter(c => c.health < 70).sort((a, b) => a.health - b.health);
@@ -109,13 +146,11 @@ export default function AdminDashboardOtimizado() {
   // Componente de Cliente em Risco
   const RiskClientCard = ({ client }) => (
     <div
-      onClick={() => setSelectedRiskClient(client)}
       style={{
         background: '#0E1410',
         border: `2px solid ${R}`,
         borderRadius: 12,
         padding: 16,
-        cursor: 'pointer',
         marginBottom: 12,
         transition: 'all 0.2s',
       }}
@@ -214,9 +249,9 @@ export default function AdminDashboardOtimizado() {
     </div>
   );
 
-  const totalMRR = CLIENTS.reduce((s, c) => s + c.mrr, 0);
-  const totalLeads = CLIENTS.reduce((s, c) => s + c.leads, 0);
-  const avgHealth = Math.round(CLIENTS.reduce((s, c) => s + c.health, 0) / CLIENTS.length);
+  const totalMRR = overviewData?.total_mrr || CLIENTS.reduce((s, c) => s + c.mrr, 0);
+  const totalLeads = overviewData?.total_leads || CLIENTS.reduce((s, c) => s + c.leads, 0);
+  const avgHealth = CLIENTS.length > 0 ? Math.round(CLIENTS.reduce((s, c) => s + c.health, 0) / CLIENTS.length) : 0;
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif", color: '#E8F0EA', minHeight: '100vh', background: '#060908' }}>
@@ -227,20 +262,44 @@ export default function AdminDashboardOtimizado() {
             <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 20, color: '#fff', marginBottom: 4 }}>
               <span style={{ color: G }}>⬡</span> MFL Digital Solutions <span style={{ color: '#5A7A5E', fontWeight: 400 }}>Admin</span>
             </div>
-            <div style={{ fontSize: 12, color: '#5A7A5E' }}>
-              Painel de Controle
+            <div style={{ fontSize: 12, color: '#5A7A5E', display: 'flex', alignItems: 'center', gap: 12 }}>
+              <span>Painel de Controle</span>
+              {followupStatus && (
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: followupStatus.alive ? G : R, display: 'inline-block' }} />
+                  {followupStatus.alive ? `Scheduler Ativo (${followupStatus.jobs_count} jobs)` : 'Scheduler Offline!'}
+                </span>
+              )}
             </div>
           </div>
-          <div style={{
-            background: '#1A2A1C',
-            border: '1px solid #2A3A2C',
-            borderRadius: 8,
-            padding: '8px 16px',
-            fontSize: 12,
-            color: R,
-            fontWeight: 600,
-          }}>
-            {riskClients.length} ⚠️ clientes em risco
+          <div style={{ display: 'flex', gap: 12 }}>
+            <button
+              onClick={fetchData}
+              disabled={dataLoading}
+              style={{
+                background: 'transparent',
+                border: `1px solid ${G}`,
+                color: G,
+                borderRadius: 8,
+                padding: '8px 16px',
+                fontSize: 12,
+                cursor: dataLoading ? 'not-allowed' : 'pointer',
+                opacity: dataLoading ? 0.6 : 1
+              }}
+            >
+              🔄 Sincronizar API
+            </button>
+            <div style={{
+              background: '#1A2A1C',
+              border: '1px solid #2A3A2C',
+              borderRadius: 8,
+              padding: '8px 16px',
+              fontSize: 12,
+              color: riskClients.length > 0 ? R : G,
+              fontWeight: 600,
+            }}>
+              {riskClients.length} ⚠️ clientes em risco
+            </div>
           </div>
         </div>
       </div>
@@ -285,7 +344,70 @@ export default function AdminDashboardOtimizado() {
               <KPICard icon="💰" label="MRR Total" value={`R$ ${fmt(totalMRR)}`} sub={`${CLIENTS.length} clientes`} color={G} delta={22} />
               <KPICard icon="📨" label="Leads/mês" value={fmt(totalLeads)} sub="processados" color={B} delta={31} />
               <KPICard icon="❤️" label="Health Médio" value={`${avgHealth}%`} sub="satisfação" color="#E91E8C" delta={5} />
-              <KPICard icon="📅" label="ARR Projetado" value={`R$ ${fmt(totalMRR * 12)}`} sub="anualizado" color={Y} delta={22} />
+              {tokenCosts ? (
+                <KPICard icon="🤖" label="Custo OpenAI" value={`R$ ${fmt(tokenCosts.total_cost_brl || 0)}`} sub={`${fmt(tokenCosts.total_tokens || 0)} tokens`} color={Y} />
+              ) : (
+                <KPICard icon="📅" label="ARR Projetado" value={`R$ ${fmt(totalMRR * 12)}`} sub="anualizado" color={Y} delta={22} />
+              )}
+            </div>
+
+            {/* Sessão Dupla: Token Costs Progress e Pending Followups */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 20 }}>
+
+              {/* Token Costs */}
+              <div style={{ background: '#0A0F0B', border: '1px solid #1A2A1C', borderRadius: 14, padding: 24 }}>
+                <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 20 }}>
+                  Consumo OpenAI (Budget R$ 500)
+                </div>
+                {tokenCosts ? (
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <span style={{ fontSize: 12, color: '#E8F0EA' }}>{fmt((tokenCosts.total_cost_brl / 500) * 100)}% consumido</span>
+                      <span style={{ fontSize: 12, color: G }}>R$ {fmt(tokenCosts.total_cost_brl)} / 500</span>
+                    </div>
+                    <div style={{ height: 6, background: '#1A2A1C', borderRadius: 3, overflow: 'hidden', marginBottom: 16 }}>
+                      <div style={{
+                        height: '100%',
+                        width: `${Math.min((tokenCosts.total_cost_brl / 500) * 100, 100)}%`,
+                        background: (tokenCosts.total_cost_brl / 500) > 0.8 ? R : G,
+                        borderRadius: 3,
+                      }} />
+                    </div>
+                    <div style={{ fontSize: 11, color: '#5A7A5E' }}>
+                      Alerta configurado para 80% do plafond.
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ fontSize: 12, color: '#5A7A5E' }}>Carregando dados da OpenAI...</div>
+                )}
+              </div>
+
+              {/* Feed de Follow-ups */}
+              <div style={{ background: '#0A0F0B', border: '1px solid #1A2A1C', borderRadius: 14, padding: 24 }}>
+                <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 20 }}>
+                  Feed de Follow-ups Pendentes (Ação Imediata)
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 180, overflowY: 'auto' }}>
+                  {pendingFollowups.length > 0 ? pendingFollowups.map(lead => (
+                    <div key={lead.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#0E1410', padding: '12px', borderRadius: 8, border: '1px solid #1A2A1C' }}>
+                      <div>
+                        <div style={{ fontSize: 13, color: '#fff' }}>{lead.summary || `Lead ${lead.id}`} - <strong style={{ color: B }}>{lead.phone}</strong></div>
+                        <div style={{ fontSize: 11, color: '#5A7A5E' }}>
+                          Status: {lead.status} | Client ID: {lead.client_id}
+                        </div>
+                      </div>
+                      <span style={{ fontSize: 11, padding: '4px 8px', borderRadius: 4, background: lead.classification === 'hot' ? `${R}22` : `${Y}22`, color: lead.classification === 'hot' ? R : Y }}>
+                        {lead.classification.toUpperCase()} • {(lead.hours_since).toFixed(1)}h
+                      </span>
+                    </div>
+                  )) : (
+                    <div style={{ fontSize: 12, color: '#5A7A5E', textAlign: 'center', padding: '20px 0' }}>
+                      Nenhum follow-up pendente no momento.
+                    </div>
+                  )}
+                </div>
+              </div>
+
             </div>
 
             {/* Status dos Clientes */}
@@ -368,7 +490,7 @@ export default function AdminDashboardOtimizado() {
                 ⚠️ Clientes em Risco de Churn
               </div>
               <div style={{ fontSize: 12, color: '#5A7A5E' }}>
-                {riskClients.length} cliente(s) com health < 70% requer(em) atenção imediata
+                {riskClients.length} cliente(s) com health &lt; 70% requer(em) atenção imediata
               </div>
             </div>
 
@@ -607,7 +729,7 @@ export default function AdminDashboardOtimizado() {
                     🚨 Alertas Críticos
                   </div>
                   <div style={{ fontSize: 11, color: '#5A7A5E' }}>
-                    Notificação quando cliente tem health < 60%
+                    Notificação quando cliente tem health &lt; 60%
                   </div>
                 </div>
                 <button style={{

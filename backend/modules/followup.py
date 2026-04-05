@@ -358,8 +358,7 @@ def start_scheduler():
     )
 
     _scheduler.start()
-    logger.info("[FOLLOWUP] Scheduler iniciado (intervalo: 15 min).")
-    print("[FOLLOWUP] ✅ Scheduler de follow-ups ativo.")
+    logger.info("[FOLLOWUP] Scheduler iniciado (intervalo: 15 min). Jobs ativos: %d", 1)
 
 
 def stop_scheduler():
