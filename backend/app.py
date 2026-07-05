@@ -76,13 +76,7 @@ def create_app():
     )
 
     # ── CORS restrito ──────────────────────────────────────────────────────────
-    CORS(app,
-         supports_credentials=True,
-         origins=ALLOWED_ORIGINS,
-         resources={
-             r"/api/*":     {"origins": ALLOWED_ORIGINS},
-             r"/webhook/*": {"origins": "*"},   # Webhooks externos não têm Origin fixo
-         })
+    CORS(app, supports_credentials=True, origins=ALLOWED_ORIGINS)
 
     # ── Rate Limiting (Redis em produção, memória em dev) ──────────────────────
     redis_url     = os.getenv("REDIS_URL", "")
