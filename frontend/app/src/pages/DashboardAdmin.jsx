@@ -511,7 +511,7 @@ export default function AdminDashboardOtimizado() {
                   Excelente! Nenhum cliente em risco
                 </div>
                 <div style={{ fontSize: 12, color: '#5A7A5E' }}>
-                  Todos os seus clientes têm health > 70%
+                  Todos os seus clientes têm health &gt; 70%
                 </div>
               </div>
             )}
