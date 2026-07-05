@@ -78,6 +78,20 @@ def create_app():
     # ── CORS restrito ──────────────────────────────────────────────────────────
     CORS(app, supports_credentials=True, origins=r".*")
 
+    @app.after_request
+    def force_cors(response):
+        origin = request.headers.get('Origin')
+        if origin:
+            response.headers.set('Access-Control-Allow-Origin', origin)
+            response.headers.set('Access-Control-Allow-Credentials', 'true')
+        
+        if request.method == 'OPTIONS':
+            response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
+            response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+            response.status_code = 200
+        
+        return response
+
     # ── Rate Limiting (Redis em produção, memória em dev) ──────────────────────
     redis_url     = os.getenv("REDIS_URL", "")
     storage_uri   = redis_url if redis_url else "memory://"
