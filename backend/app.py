@@ -61,10 +61,8 @@ def create_app():
     # ── Segurança ──────────────────────────────────────────────────────────────
     secret = os.getenv("SECRET_KEY")
     if not secret:
-        if _ENV == "production":
-            raise RuntimeError("SECRET_KEY não definida! Configure no Railway antes de produção.")
-        secret = secrets.token_urlsafe(32)   # apenas em dev
-        logger.warning("[CONFIG] SECRET_KEY não definida — usando chave temporária (só em dev).")
+        secret = secrets.token_urlsafe(32)
+        logger.warning("[CONFIG] SECRET_KEY não definida no ambiente — usando chave temporária (sessões expirarão no restart).")
 
     app.config.update(
         SECRET_KEY=secret,

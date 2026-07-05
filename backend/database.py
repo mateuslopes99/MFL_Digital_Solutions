@@ -41,6 +41,11 @@ def _get_pg_pool():
             from psycopg2 import pool
             # Normaliza postgres:// → postgresql:// (Railway usa postgres://)
             url = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+            
+            # Corrige falha silenciosa de crash no Neon (exige SSL)
+            if "neon.tech" in url and "sslmode=require" not in url:
+                url += "?sslmode=require" if "?" not in url else "&sslmode=require"
+                
             _pg_pool = pool.SimpleConnectionPool(1, 10, url)
             logger.info("[DB] Pool PostgreSQL iniciado.")
         except ImportError:
