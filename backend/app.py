@@ -73,8 +73,23 @@ def create_app():
         PROPAGATE_EXCEPTIONS=True,
     )
 
-    # ── CORS ───────────────────────────────────────────────────────────────────
-    CORS(app, supports_credentials=True, origins=ALLOWED_ORIGINS)
+    # ── CORS Manual (Blindado) ─────────────────────────────────────────────────
+    @app.after_request
+    def force_cors(response):
+        origin = request.headers.get('Origin')
+        
+        # Permitir as origens configuradas (ou espelhar para testar)
+        if origin in ALLOWED_ORIGINS:
+            response.headers['Access-Control-Allow-Origin'] = origin
+            response.headers['Access-Control-Allow-Credentials'] = 'true'
+            
+        # O navegador precisa dessas permissões no preflight
+        if request.method == 'OPTIONS':
+            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, PUT, DELETE'
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Accept'
+            response.status_code = 200
+            
+        return response
 
     # ── Rate Limiting (Redis em produção, memória em dev) ──────────────────────
     redis_url     = os.getenv("REDIS_URL", "")
