@@ -166,6 +166,10 @@ def create_app():
             "scheduler": get_scheduler_status(),
         }), 200
 
+    @app.route("/api/debug/headers", methods=["GET", "POST", "OPTIONS"])
+    def debug_headers():
+        return jsonify({k: v for k, v in request.headers.items()}), 200
+
     # ── Catch-all → React SPA ─────────────────────────────────────────────────
     # Rotas /api/* e /webhook/* NUNCA chegam aqui (blueprints têm prioridade).
     # Rota de API retornando 404 cai no errorhandler(404) → JSON correto.
