@@ -53,10 +53,27 @@ ALLOWED_ORIGINS = (
     ]
 )
 
+# ── CORS Override Absoluto (Flask Subclass) ────────────────────────────────
+class CORSFlask(Flask):
+    def make_default_options_response(self):
+        response = super().make_default_options_response()
+        origin = request.headers.get("Origin") or "https://mfl-frontend.pages.dev"
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept"
+        return response
+
+    def process_response(self, response):
+        response = super().process_response(response)
+        origin = request.headers.get("Origin") or "https://mfl-frontend.pages.dev"
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response
 
 def create_app():
     """App Factory — cria e configura a instância Flask."""
-    app = Flask(__name__)
+    app = CORSFlask(__name__)
 
     # ── Segurança ──────────────────────────────────────────────────────────────
     secret = os.getenv("SECRET_KEY")
@@ -73,32 +90,6 @@ def create_app():
         PROPAGATE_EXCEPTIONS=True,
     )
 
-    # ── CORS Middleware WSGI (Invencível) ──────────────────────────────────────
-    class CORSMiddleware:
-        def __init__(self, app):
-            self.app = app
-
-        def __call__(self, environ, start_response):
-            def custom_start_response(status, headers, exc_info=None):
-                headers.append(('Access-Control-Allow-Origin', 'https://mfl-frontend.pages.dev'))
-                headers.append(('Access-Control-Allow-Credentials', 'true'))
-                headers.append(('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE'))
-                headers.append(('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept'))
-                return start_response(status, headers, exc_info)
-
-            if environ['REQUEST_METHOD'] == 'OPTIONS':
-                start_response('200 OK', [
-                    ('Access-Control-Allow-Origin', 'https://mfl-frontend.pages.dev'),
-                    ('Access-Control-Allow-Credentials', 'true'),
-                    ('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE'),
-                    ('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept'),
-                    ('Content-Length', '0')
-                ])
-                return [b'']
-                
-            return self.app(environ, custom_start_response)
-
-    app.wsgi_app = CORSMiddleware(app.wsgi_app)
 
     # ── Rate Limiting (Redis em produção, memória em dev) ──────────────────────
     redis_url     = os.getenv("REDIS_URL", "")
