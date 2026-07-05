@@ -48,6 +48,7 @@ ALLOWED_ORIGINS = (
         "https://mfldigitalsolutions.com.br",
         "https://app.mfldigitalsolutions.com.br",
         "https://mfl-digital.vercel.app",
+        "https://mfl-frontend.pages.dev",
         *_EXTRA_ORIGINS,
     ]
 )
