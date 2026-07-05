@@ -79,7 +79,7 @@ def create_app():
         if request.method == "OPTIONS":
             response = app.make_default_options_response()
             origin = request.headers.get("Origin")
-            if origin in ALLOWED_ORIGINS:
+            if origin: # Temporariamente liberando todas as origens para teste
                 response.headers["Access-Control-Allow-Origin"] = origin
                 response.headers["Access-Control-Allow-Credentials"] = "true"
             response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
@@ -89,7 +89,7 @@ def create_app():
     @app.after_request
     def force_cors(response):
         origin = request.headers.get('Origin')
-        if origin in ALLOWED_ORIGINS:
+        if origin:
             response.headers['Access-Control-Allow-Origin'] = origin
             response.headers['Access-Control-Allow-Credentials'] = 'true'
         return response
