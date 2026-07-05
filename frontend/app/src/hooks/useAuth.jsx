@@ -5,6 +5,7 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 
 const AuthContext = createContext(null);
+import API_BASE from '../utils/api';
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
@@ -12,7 +13,7 @@ export function AuthProvider({ children }) {
 
     // Verifica sessão ao montar
     useEffect(() => {
-        fetch('/api/auth/me', { credentials: 'include' })
+        fetch(`${API_BASE}/api/auth/me`, { credentials: 'include' })
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 setUser(data?.authenticated ? data : null);
@@ -26,7 +27,7 @@ export function AuthProvider({ children }) {
 
     async function login(username, password, role) {
         try {
-            const res = await fetch('/api/auth/login', {
+            const res = await fetch(`${API_BASE}/api/auth/login`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
@@ -44,7 +45,7 @@ export function AuthProvider({ children }) {
     }
 
     async function logout() {
-        await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+        await fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' });
         setUser(null);
     }
 
