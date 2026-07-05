@@ -28,10 +28,10 @@ export default function AdminDashboardOtimizado() {
     setDataLoading(true);
     
     Promise.all([
-      fetch('http://localhost:5001/api/dashboard/admin/overview', { credentials: 'omit' }).then(r => r.json()),
-      fetch('http://localhost:5001/api/dashboard/admin/followup/status', { credentials: 'omit' }).then(r => r.json()),
-      fetch('http://localhost:5001/api/dashboard/admin/token-costs', { credentials: 'omit' }).then(r => r.json()),
-      fetch('http://localhost:5001/api/dashboard/admin/followup/leads', { credentials: 'omit' }).then(r => r.json())
+      fetch('/api/dashboard/admin/overview', { credentials: 'omit' }).then(r => r.json()),
+      fetch('/api/dashboard/admin/followup/status', { credentials: 'omit' }).then(r => r.json()),
+      fetch('/api/dashboard/admin/token-costs', { credentials: 'omit' }).then(r => r.json()),
+      fetch('/api/dashboard/admin/followup/leads', { credentials: 'omit' }).then(r => r.json())
     ]).then(([overview, status, tokens, follows]) => {
       setOverviewData(overview);
       setFollowupStatus(status);

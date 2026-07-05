@@ -21,7 +21,7 @@ export default function ClientDashboardOtimizado() {
   const CLIENT_ID = 1; // ID chumbado para demo; na produção, virá do contexto/auth
 
   useEffect(() => {
-    fetch(`http://localhost:5001/api/dashboard/client/${CLIENT_ID}/overview`, { credentials: 'omit' })
+    fetch(`/api/dashboard/client/${CLIENT_ID}/overview`, { credentials: 'omit' })
       .then(res => res.json())
       .then(data => setClientData(data))
       .catch(err => console.error("Erro overview cliente:", err));
