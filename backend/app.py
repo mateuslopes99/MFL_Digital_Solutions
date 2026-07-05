@@ -75,8 +75,7 @@ def create_app():
         PROPAGATE_EXCEPTIONS=True,
     )
 
-    # ── CORS restrito ──────────────────────────────────────────────────────────
-    CORS(app, supports_credentials=True, origins=r".*")
+    # ── CORS Manual (Forçado) ──────────────────────────────────────────────────
 
     @app.after_request
     def force_cors(response):
