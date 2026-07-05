@@ -42,7 +42,7 @@ _ENV = os.getenv("FLASK_ENV", "development")
 _EXTRA_ORIGINS = [o.strip() for o in os.getenv("ALLOWED_ORIGINS_EXTRA", "").split(",") if o.strip()]
 
 ALLOWED_ORIGINS = (
-    ["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1:5000"]
+    ["http://localhost:3000", "http://localhost:5000", "http://127.0.0.1:5000", "https://mfl-frontend.pages.dev"]
     if _ENV == "development"
     else [
         "https://mfldigitalsolutions.com.br",
