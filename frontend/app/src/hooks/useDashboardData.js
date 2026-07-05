@@ -4,6 +4,7 @@
  */
 import { useState, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
+import API_BASE from '../utils/api';
 
 // ── Admin ──────────────────────────────────────────────────────────────────
 export function useAdminDashboard() {
@@ -15,8 +16,8 @@ export function useAdminDashboard() {
         setLoading(true);
         try {
             const [clientsRes, overviewRes] = await Promise.all([
-                fetch('/api/clients/', { credentials: 'include' }),
-                fetch('/api/dashboard/admin/overview', { credentials: 'include' }),
+                fetch(`${API_BASE}/api/clients/`, { credentials: 'include' }),
+                fetch(`${API_BASE}/api/dashboard/admin/overview`, { credentials: 'include' }),
             ]);
 
             if (!clientsRes.ok || !overviewRes.ok) {
@@ -68,7 +69,7 @@ export function useAdminDashboard() {
 
 // ── Run Health Check (admin) ──────────────────────────────────────────────
 export async function runHealthCheck() {
-    const res = await fetch('/api/dashboard/admin/run-health-check', {
+    const res = await fetch(`${API_BASE}/api/dashboard/admin/run-health-check`, {
         method: 'POST',
         credentials: 'include',
     });
@@ -85,7 +86,7 @@ export function useHealthHistory(clientId) {
         setLoading(true);
         try {
             const res = await fetch(
-                `/api/dashboard/admin/clients/${clientId}/history?weeks=12`,
+                `${API_BASE}/api/dashboard/admin/clients/${clientId}/history?weeks=12`,
                 { credentials: 'include' }
             );
             if (res.ok) {
@@ -114,8 +115,8 @@ export function useClientDashboard(clientId) {
         setLoading(true);
         try {
             const [overviewRes, leadsRes] = await Promise.all([
-                fetch(`/api/dashboard/client/${clientId}/overview`, { credentials: 'include' }),
-                fetch(`/api/leads/?client_id=${clientId}&limit=100`, { credentials: 'include' }),
+                fetch(`${API_BASE}/api/dashboard/client/${clientId}/overview`, { credentials: 'include' }),
+                fetch(`${API_BASE}/api/leads/?client_id=${clientId}&limit=100`, { credentials: 'include' }),
             ]);
             if (!overviewRes.ok || !leadsRes.ok) throw new Error('Erro ao carregar dados do cliente');
 
