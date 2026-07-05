@@ -1,0 +1,67 @@
+# Render.com — render.yaml
+# Configuração declarativa do serviço Flask
+# Substitui o Railway (railway.json + Procfile)
+# Documentação: https://render.com/docs/render-yaml-spec
+
+services:
+  - type: web
+    name: mfl-backend
+    runtime: python
+    region: ohio           # us-east-ohio é o mais próximo do BR com menor latência
+    plan: starter          # $7/mês — instância sempre ativa (sem cold start)
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && waitress-serve --port=$PORT --threads=4 --call app:create_app
+    healthCheckPath: /health
+
+    # Variáveis de ambiente — valores reais configurar no dashboard do Render
+    envVars:
+      - key: FLASK_ENV
+        value: production
+
+      - key: SECRET_KEY
+        generateValue: true        # Render gera automaticamente uma chave segura
+
+      - key: DATABASE_URL
+        value: "DEFINIR_NO_DASHBOARD"   # Cole a URL do Neon.tech aqui
+
+      - key: OPENAI_API_KEY
+        value: "DEFINIR_NO_DASHBOARD"   # Nova chave gerada em platform.openai.com
+
+      - key: ANTHROPIC_API_KEY
+        value: "DEFINIR_NO_DASHBOARD"   # Obtida em console.anthropic.com
+
+      - key: WHATSAPP_PROVIDER
+        value: evolution
+
+      - key: EVOLUTION_API_URL
+        value: "DEFINIR_NO_DASHBOARD"
+
+      - key: EVOLUTION_API_KEY
+        value: "DEFINIR_NO_DASHBOARD"
+
+      - key: EVOLUTION_INSTANCE
+        value: mfl-default
+
+      - key: WEBHOOK_SECRET
+        generateValue: true
+
+      - key: ALLOWED_ORIGINS_EXTRA
+        value: "DEFINIR_NO_DASHBOARD"   # URL do Cloudflare Pages: https://mfl.pages.dev
+
+      - key: BOT_NAME
+        value: "Assistente MFL"
+
+      - key: COMPANY_NAME
+        value: "MFL Digital Solutions"
+
+      - key: RESPONSE_TIMEOUT_SECONDS
+        value: "30"
+
+      - key: USE_MOCK
+        value: "false"
+
+      - key: ADMIN_USER
+        value: "DEFINIR_NO_DASHBOARD"
+
+      - key: ADMIN_PASS
+        value: "DEFINIR_NO_DASHBOARD"

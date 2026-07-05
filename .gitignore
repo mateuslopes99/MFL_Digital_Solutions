@@ -51,3 +51,16 @@ backend/check_db.py
 backend/test_openai.py
 backend/test_flow.py
 backend/serve.py
+
+# ── Cloudflare / Vercel (cache local de deploy) ───────
+.vercel/
+.wrangler/
+frontend/.vercel/
+
+# ── Render (gerado localmente) ────────────────────────
+.render/
+
+# ── Segurança extra ───────────────────────────────────
+.env.local
+.env.production
+.env.*.local

@@ -1,0 +1,11 @@
+{
+  "name": "mfl-frontend",
+  "pages_build_output_dir": "app/dist",
+  "build_config": {
+    "build_command": "cd app && npm install && npm run build",
+    "root_dir": "frontend",
+    "destination_dir": "app/dist"
+  },
+  "compatibility_date": "2026-07-04",
+  "compatibility_flags": []
+}

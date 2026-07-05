@@ -1,0 +1,11 @@
+# Cloudflare Pages — _redirects
+# Proxy para o backend Render.com ✅ CONFIRMADO: https://mfl-backend.onrender.com
+# Substitui o vercel.json
+
+/api/*      https://mfl-backend.onrender.com/api/:splat      200
+/webhook/*  https://mfl-backend.onrender.com/webhook/:splat  200
+/logo/*     https://mfl-backend.onrender.com/logo/:splat     200
+
+# Rotas de páginas locais
+/login      /login/login.html   200
+/           /landing/index.html 200
