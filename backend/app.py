@@ -78,20 +78,18 @@ def create_app():
     def handle_preflight():
         if request.method == "OPTIONS":
             response = app.make_default_options_response()
-            origin = request.headers.get("Origin")
-            if origin: # Temporariamente liberando todas as origens para teste
-                response.headers["Access-Control-Allow-Origin"] = origin
-                response.headers["Access-Control-Allow-Credentials"] = "true"
+            origin = request.headers.get("Origin") or "https://mfl-frontend.pages.dev"
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Credentials"] = "true"
             response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
             response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept"
             return response
 
     @app.after_request
     def force_cors(response):
-        origin = request.headers.get('Origin')
-        if origin:
-            response.headers['Access-Control-Allow-Origin'] = origin
-            response.headers['Access-Control-Allow-Credentials'] = 'true'
+        origin = request.headers.get('Origin') or "https://mfl-frontend.pages.dev"
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
         return response
 
     # ── Rate Limiting (Redis em produção, memória em dev) ──────────────────────
