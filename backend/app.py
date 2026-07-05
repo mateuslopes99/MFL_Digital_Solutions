@@ -76,7 +76,7 @@ def create_app():
     )
 
     # ── CORS restrito ──────────────────────────────────────────────────────────
-    CORS(app, supports_credentials=True, origins=ALLOWED_ORIGINS)
+    CORS(app, supports_credentials=True, origins=r".*")
 
     # ── Rate Limiting (Redis em produção, memória em dev) ──────────────────────
     redis_url     = os.getenv("REDIS_URL", "")
