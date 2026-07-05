@@ -75,21 +75,13 @@ def create_app():
         PROPAGATE_EXCEPTIONS=True,
     )
 
-    # ── CORS Manual (Forçado) ──────────────────────────────────────────────────
-
-    @app.after_request
-    def force_cors(response):
-        origin = request.headers.get('Origin')
-        if origin:
-            response.headers.set('Access-Control-Allow-Origin', origin)
-            response.headers.set('Access-Control-Allow-Credentials', 'true')
-        
-        if request.method == 'OPTIONS':
-            response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-            response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-            response.status_code = 200
-        
-        return response
+    # ── CORS ───────────────────────────────────────────────────────────────────
+    CORS(app,
+         supports_credentials=True,
+         resources={
+             r"/api/.*":     {"origins": ALLOWED_ORIGINS},
+             r"/webhook/.*": {"origins": "*"},
+         })
 
     # ── Rate Limiting (Redis em produção, memória em dev) ──────────────────────
     redis_url     = os.getenv("REDIS_URL", "")
