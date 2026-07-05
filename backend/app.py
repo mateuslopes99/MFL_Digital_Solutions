@@ -66,11 +66,11 @@ class CORSFlask(Flask):
 
     def process_response(self, response):
         response = super().process_response(response)
+        response.headers["X-Debug-Canario"] = "MFL-TESTE-123"
         origin = request.headers.get("Origin") or "https://mfl-frontend.pages.dev"
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Credentials"] = "true"
         return response
-
 def create_app():
     """App Factory — cria e configura a instância Flask."""
     app = CORSFlask(__name__)
