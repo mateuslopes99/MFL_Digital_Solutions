@@ -578,15 +578,19 @@ def insert_lead(client_id, phone, classification, category, urgency, budget,
 
 
 
-def get_leads(client_id=None, classification=None, limit=100):
-    """Retorna leads com filtros opcionais."""
+def get_leads(client_id: int, classification=None, limit=100):
+    """
+    Retorna leads de um cliente específico.
+
+    SEGURANÇA MULTI-TENANT: client_id é OBRIGATÓRIO.
+    Nunca retornar leads sem filtrar por tenant.
+    """
+    if not client_id:
+        raise ValueError("[SECURITY] get_leads() requer client_id — vazamento multi-tenant bloqueado.")
     conn   = get_connection()
     cursor = conn.cursor()
-    query  = "SELECT * FROM leads WHERE 1=1"
-    params = []
-    if client_id:
-        query += " AND client_id = ?"
-        params.append(client_id)
+    query  = "SELECT * FROM leads WHERE client_id = ?"
+    params = [client_id]
     if classification:
         query += " AND classification = ?"
         params.append(classification)

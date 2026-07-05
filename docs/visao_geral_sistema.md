@@ -1,85 +1,104 @@
-# Visão Geral do Sistema - MFL Digital Solutions
+# Visão Geral do Sistema — MFL Digital Solutions
 
-Este documento serve como um guia consolidado sobre a arquitetura, funcionalidades, ferramentas, planos e operações de suporte da **MFL Digital Solutions**, com foco em nosso Produto Principal: **Triagem Automática de Leads via WhatsApp com IA**.
-
----
-
-## 1. O Sistema: Triagem Automática de Leads via WhatsApp
-
-O sistema da MFL Digital Solutions é uma plataforma inteligente B2B projetada inicialmente para o nicho de imobiliárias em Maceió-AL. Ele automatiza completamente o atendimento inicial de leads capturados em campanhas (ex. Meta Ads, Google Ads).
-
-### Fluxo de Funcionamento:
-1. **Captura:** O lead entra em contato via WhatsApp através de anúncios ou links diretos.
-2. **Atendimento 24/7:** O bot integrado ao WhatsApp inicia a conversa instantaneamente.
-3. **Qualificação com IA:** Utilizando inteligência artificial (GPT-4), o sistema entende o perfil, as necessidades e a urgência do lead.
-4. **Classificação:** O lead recebe uma TAG de temperatura (HOT, WARM, COLD) baseada no seu grau de interesse.
-5. **Distribuição/Roteamento:** A depender das regras da imobiliária (e do plano contratado), o lead é roteado para o corretor correto de forma inteligente.
-6. **Integração CRM:** Todos os dados da conversa, resumo do perfil e contatos são inseridos automaticamente no CRM (Ex: RD Station, Pipedrive).
+> **Para agentes de IA:** leia este documento antes de qualquer tarefa. Ele é a fonte de verdade sobre o que o sistema é, como funciona e quais são as decisões técnicas já tomadas.
 
 ---
 
-## 2. Principais Funções e Capacidades
+## 1. O Que é a MFL Digital Solutions
 
-- **Atendimento Contínuo e Automático (24/7):** Sem perda de leads de madrugada ou finais de semana e feriados.
-- **Análise Perceptiva:** O bot utiliza IA avançada não apenas para seguir menus de opções, mas conversar em linguagem natural, entendendo contexto.
-- **Dashboards em Tempo Real:** 
-  - **Dashboard Cliente:** Onde o cliente (imobiliária) acompanha o tráfego de leads qualificados, taxas de conversão e relatórios.
-  - **Dashboard Admin:** Onde a MFL gerencia as instâncias dos clientes e performance dos bots.
-- **Roteamento Inteligente:** Distribuição dos leads de acordo com o corretor, a região desejada do imóvel ou equipe responsável.
-- **Follow-up Automático:** Automação multi-etapas para re-engajar leads que pararam de responder.
+A MFL Digital Solutions é uma plataforma **B2B SaaS** de automação de qualificação e follow-up de leads via WhatsApp com IA. Sediada em Maceió-AL, Brasil.
 
----
+**Proposta de valor central:** pequenas e médias empresas perdem leads porque não conseguem responder rápido no WhatsApp — especialmente fora do horário comercial. A MFL qualifica automaticamente cada lead (score 0–100), classifica por temperatura (HOT/WARM/COLD), conduz follow-up automático e só aciona o vendedor humano quando o lead está pronto para fechar.
 
-## 3. Stack Tecnológica e Ferramentas Usadas
+**Mercados atendidos:**
 
-A arquitetura do sistema foi desenhada para ser escalável, modular e robusta:
+| Segmento | Produto | Público |
+|---|---|---|
+| **B2B — PMEs** | Triagem e qualificação de leads | Imobiliárias, Clínicas, Veículos, Contabilidade |
+| **B2C — Pequenos negócios** | Agendamento e anti-falta | Manicures, Salões, Personal trainers, Dentistas de bairro |
 
-### **Backend (Cérebro do Sistema)**
-- **Linguagem / Framework:** Python 3.11 + Flask (Gerenciamento da lógica da API e integração de rotas).
-- **Inteligência Artificial:** OpenAI GPT-4 API (Para processamento de linguagem natural e classificação do lead).
-- **Integração de Mensageria:** Twilio WhatsApp API (Gerenciamento seguro dos disparos e recebimento de mensagens do WhatsApp).
-- **Banco de Dados:** SQLite (Desenvolvimento) com transição para PostgreSQL (Produção).
-
-### **Frontend (Painéis Administrativos e Landing Page)**
-- **Tecnologias Básicas:** HTML5, CSS3, e JavaScript Vanilla para a arquitetura de apresentação comercial.
-- **Dashboards:** React / JSX para interfaces reativas, de alta performance e experiência "seamless".
-
-### **Infraestrutura e Deploy**
-- **Hospedagem:** Servidores dedicados virtuais (VPS) via DigitalOcean e/ou AWS.
+**Fundador:** Mateus — CEO, atua como orquestrador estratégico com auxílio de IA (Claude + Gemini).
 
 ---
 
-## 4. Planos e Pacotes Oferecidos
+## 2. Fluxos de Funcionamento
 
-A MFL Digital Solutions oferece 4 modelos flexíveis de assinatura (valores de referência):
+### Fluxo B2B (Imobiliárias e PMEs)
+1. **Captura:** Lead entra em contato via WhatsApp (Meta Ads, portais, links diretos)
+2. **Atendimento 24/7:** IA inicia conversa instantaneamente, sem humano
+3. **Qualificação:** GPT-4o avalia perfil, urgência, budget e intenção em linguagem natural
+4. **Score 0–100:** Lead recebe pontuação baseada em critérios documentados
+5. **Classificação:** TAG automática — HOT / WARM / COLD
+6. **Ficha HOT:** Se score ≥ 75, o corretor recebe ficha estruturada no WhatsApp em ≤ 30 min
+7. **Follow-up automático:** Cadências por temperatura — HOT (30 min) · WARM (24h/72h/7d) · COLD (3d/10d)
+8. **CRM:** Dados inseridos automaticamente via webhook para Kommo, HubSpot, Pipedrive
 
-1. **Starter (R$ 790/mês | Zero Setup):** 
-   - Até 50 leads/mês. Qualificação IA, Dashboard, integração com 1 CRM e Relatório mensal.
-2. **Básico (R$ 1.490/mês | Setup R$ 990):** 
-   - Até 200 leads/mês. Incrementa velocidade no suporte e volume.
-3. **Pro (R$ 2.790/mês | Setup R$ 2.500):** *Mais Vendido*
-   - Até 600 leads/mês. Inclui Distribuição Inteligente, Follow-up automático multi-etapa, 3 integrações CRM, e Suporte WhatsApp Prioritário.
-4. **Enterprise (R$ 5.490/mês | Setup R$ 4.500):** 
-   - Leads Ilimitados. Customização extrema, Account Manager, Treinamentos da equipe e Uptime garantido em SLA.
-
----
-
-## 5. Add-ons (Módulos Expansíveis)
-Clientes de qualquer pacote podem comprar melhorias avulsas para suas operações sem precisar mudar de assinatura imediatamente:
-
-- **WhatsApp Extra:** + R$ 490/mês
-- **Integração CRM Extra:** + R$ 290/mês
-- **Relatório PDF Semanal Customizado:** + R$ 190/mês
-- **Onboarding Acelerado (em 1 dia):** Pagamento Único de R$ 1.490
-- **Treinamento Extra de Equipe (4h):** Pagamento Único de R$ 990
+### Fluxo Essencial (Pequenos negócios de serviço)
+1. **Cliente envia mensagem no WhatsApp** (qualquer horário)
+2. **IA responde:** tira dúvidas sobre serviços, preços e disponibilidade
+3. **Agendamento pelo chat:** cliente informa dia/hora, IA confirma disponibilidade e registra
+4. **Lembrete automático:** 24h antes e 1h antes do atendimento — cliente confirma ou reagenda
+5. **Reativação:** clientes sem retorno há 30+ dias recebem mensagem automática personalizada
+6. **Painel básico:** profissional vê agendamentos do dia, confirmações e faltas
 
 ---
 
-## 6. Manutenção e Suporte (Política de Qualidade)
+## 3. Stack Tecnológica (Decisões Finais)
 
-Temos como premissa ser um parceiro que elimina as dores tecnológicas das imobiliárias. Nosso modelo de segurança e retenção inclui:
+| Componente | Tecnologia | Observação |
+|---|---|---|
+| **Backend** | Python 3.11 + Flask | Modular, com rotas separadas por domínio |
+| **Banco de Dados** | PostgreSQL via Supabase | SQLite apenas em desenvolvimento local |
+| **IA Principal** | GPT-4o-mini | ~80% das conversas — custo otimizado |
+| **IA Premium** | GPT-4o | Acionado quando score > 70 |
+| **IA Fallback** | Claude Haiku (Anthropic) | Automático quando OpenAI está instável |
+| **Voice-to-Text** | OpenAI Whisper | Transcrição de áudios — add-on R$190/mês |
+| **WhatsApp Starter** | Evolution API (Baileys, self-hosted) | Até ~300 leads/mês por cliente, custo zero de licença |
+| **WhatsApp Pro/Enterprise** | 360dialog ou Gupshup (WABA oficial) | Mais estável, dentro da política Meta |
+| **Scheduler** | APScheduler | Migração para Celery + Redis apenas após 30+ clientes |
+| **Frontend** | HTML/JS puro autocontido | Dashboards sem framework; Landing page HTML/JS |
+| **Hosting Backend** | Railway | Com Procfile e railway.json configurados |
+| **Hosting Frontend** | Vercel | Com vercel.json configurado |
+| **Controle de Versão** | GitHub | |
 
-- **Hospedagem "White-Glove":** Servidores integralmente monitorados. Caso ocorra queda nas integrações externas, nossas instâncias se reerguem e tratam engarrafamentos automaticamente, processo 100% invisível ao cliente.
-- **Atualização Contínua da IA:** Acompanhamos a evolução das LLMs mantendo a API GPT sempre em suas versões mais precisas. O cliente não gasta com integrações de novos modelos, nós absorvemos o upgrade de fluxo.
-- **Sem "Lock-in" / Fidelidade:** Retemos o cliente pelos resultados e clareza, não por multas (SaaS puro).
-- **Garantia de 14 dias:** Política de arrependimento (Risco Zero / Money-Back) sem perguntas nas duas primeiras semanas.
+> ⚠️ **Decisão técnica já tomada:** os Dashboards foram reconstruídos de React/JSX para HTML/JS puro. Não reverter para React sem necessidade justificada de complexidade.
+
+---
+
+## 4. Diferenciais Exclusivos (Nunca Comprometer)
+
+Estes são os ativos centrais de venda. Qualquer refatoração deve preservá-los intactos:
+
+1. **Ficha HOT automática** → enviada via WhatsApp ao corretor; nenhum concorrente tem
+2. **Score IA generativa 0–100** → GPT-4o em linguagem natural, não baseado em regras rígidas
+3. **Relatório PDF mensal** → entrega automática no dia 1; nenhum concorrente tem
+4. **Isolamento multi-tenant contratual** → cláusula explícita no contrato, não apenas técnica
+5. **Especialização vertical** → prompt/fluxo/score pré-configurado por nicho do cliente
+6. **Preço fixo em BRL por empresa** → sem câmbio, sem cobrança por usuário (vantagem vs. Kommo)
+
+---
+
+## 5. Arquitetura de Segurança — Multi-Tenant
+
+**Regra inegociável:** nenhum cliente pode, em nenhuma circunstância, acessar dados de outro cliente.
+
+- Toda tabela carrega `tenant_id` obrigatório
+- Toda query filtra por `tenant_id` — sem exceção
+- Cada cliente tem número de WhatsApp próprio (instância dedicada na Evolution API)
+- Autenticação JWT valida `tenant_id` em toda requisição
+- Prompts de IA não compartilham contexto entre tenants
+- Logs e auditoria registrados por `tenant_id`, usuário e timestamp
+
+---
+
+## 6. Manutenção, Suporte e Garantias
+
+- **Monitoramento contínuo:** alertas automáticos quando API > 80% orçado, taxa de erro > 5% ou instância WA cai
+- **Atualização de IA:** a evolução dos modelos (GPT-4o → futuras versões) é absorvida pela MFL sem custo adicional ao cliente
+- **Sem lock-in:** o cliente cancela quando quiser; retenção por resultado, não por multa
+- **Garantia de 14 dias:** devolução integral sem perguntas nas primeiras 2 semanas
+- **LGPD nativo:** consentimento enviado automaticamente no início de toda conversa, com log de timestamp por tenant
+
+---
+
+*Última atualização: 2026-06-27 | Manter este arquivo em sincronia com decisões técnicas e estratégicas novas.*
