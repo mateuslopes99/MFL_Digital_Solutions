@@ -366,7 +366,7 @@ export default function AdminDashboardOtimizado() {
           {activeTab === 'overview' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
               {/* KPIs */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1px, background: 'var(--border)', border: '1px solid var(--border)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: 'var(--border)', border: '1px solid var(--border)' }}>
                 <KPICard icon="DAT" label="MRR Total" value={`R$${fmt(totalMRR)}`} sub={`CLIENTS: ${CLIENTS.length}`} color="var(--green)" delta={22} />
                 <KPICard icon="REQ" label="Leads/mês" value={fmt(totalLeads)} sub="PROCESSED" color="var(--white)" delta={31} />
                 <KPICard icon="HLT" label="Health Médio" value={`${avgHealth}%`} sub="SYSTEM_SAT" color={avgHealth < 70 ? 'var(--amber)' : 'var(--green)'} delta={5} />
