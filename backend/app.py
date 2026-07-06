@@ -166,6 +166,10 @@ def create_app():
     def debug_headers():
         return jsonify({k: v for k, v in request.headers.items()}), 200
 
+    @app.route("/favicon.ico")
+    def favicon():
+        return send_from_directory(LANDING_DIR, "favicon.ico") if (LANDING_DIR / "favicon.ico").exists() else ("", 204)
+
     # ── Catch-all → React SPA ─────────────────────────────────────────────────
     # Rotas /api/* e /webhook/* NUNCA chegam aqui (blueprints têm prioridade).
     # Rota de API retornando 404 cai no errorhandler(404) → JSON correto.
@@ -180,8 +184,13 @@ def create_app():
         static_file = REACT_DIR / path
         if path and static_file.is_file():
             return send_from_directory(REACT_DIR, path)
+        
         # Qualquer outra rota → index.html da SPA
-        return send_from_directory(REACT_DIR, "index.html")
+        index_file = REACT_DIR / "index.html"
+        if index_file.exists():
+            return send_from_directory(REACT_DIR, "index.html")
+        else:
+            return jsonify({"error": "Dashboard SPA not built on server"}), 404
 
     # ── Handlers de erro globais ──────────────────────────────────────────────
     @app.errorhandler(404)
