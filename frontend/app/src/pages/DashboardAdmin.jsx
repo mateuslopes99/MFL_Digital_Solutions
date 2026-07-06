@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth.jsx';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 /**
@@ -17,11 +15,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
  */
 
 export default function AdminDashboardOtimizado() {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
-
   const [activeTab, setActiveTab] = useState('overview');
-  
+
   const [followupStatus, setFollowupStatus] = useState(null);
   const [tokenCosts, setTokenCosts] = useState(null);
   const [pendingFollowups, setPendingFollowups] = useState([]);
@@ -31,12 +26,12 @@ export default function AdminDashboardOtimizado() {
 
   const fetchData = () => {
     setDataLoading(true);
-    
+
     Promise.all([
-      fetch('/api/dashboard/admin/overview', { credentials: 'omit' }).then(r => r.json()),
-      fetch('/api/dashboard/admin/followup/status', { credentials: 'omit' }).then(r => r.json()),
-      fetch('/api/dashboard/admin/token-costs', { credentials: 'omit' }).then(r => r.json()),
-      fetch('/api/dashboard/admin/followup/leads', { credentials: 'omit' }).then(r => r.json())
+      fetch('http://localhost:5001/api/dashboard/admin/overview', { credentials: 'omit' }).then(r => r.json()),
+      fetch('http://localhost:5001/api/dashboard/admin/followup/status', { credentials: 'omit' }).then(r => r.json()),
+      fetch('http://localhost:5001/api/dashboard/admin/token-costs', { credentials: 'omit' }).then(r => r.json()),
+      fetch('http://localhost:5001/api/dashboard/admin/followup/leads', { credentials: 'omit' }).then(r => r.json())
     ]).then(([overview, status, tokens, follows]) => {
       setOverviewData(overview);
       setFollowupStatus(status);
@@ -52,11 +47,6 @@ export default function AdminDashboardOtimizado() {
   useEffect(() => {
     fetchData();
   }, []);
-
-  async function handleLogout() {
-    await logout();
-    navigate('/login', { replace: true });
-  }
 
   const G = '#00C853'; // Verde
   const R = '#FF5252'; // Vermelho
@@ -131,114 +121,130 @@ export default function AdminDashboardOtimizado() {
     { month: 'Maio', pessimistic: 13200, realistic: 15000, optimistic: 18000 },
   ];
 
-  // Componente de Card de Métrica (Infrastructure Style)
+  // Componente de Card de Métrica
   const KPICard = ({ icon, label, value, sub, color, delta }) => (
-    <div className="panel" style={{
-      padding: '24px',
-      display: 'flex',
-      flexDirection: 'column',
-      position: 'relative',
-      overflow: 'hidden'
+    <div style={{
+      background: '#0E1410',
+      border: '1px solid #1A2A1C',
+      borderRadius: 12,
+      padding: 20,
     }}>
-      {/* Indicador de Status "WhatsApp Pulse" lateral */}
-      <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: color }} />
-      
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ fontSize: 12, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
-        <div style={{ fontSize: 16, opacity: 0.8 }}>{icon}</div>
-      </div>
-      
-      <div className="font-mono" style={{ fontSize: 32, fontWeight: 700, color: 'var(--white)', marginBottom: 8, lineHeight: 1 }}>
+      <div style={{ fontSize: 24, marginBottom: 8 }}>{icon}</div>
+      <div style={{ fontSize: 11, color: '#5A7A5E', marginBottom: 4 }}>{label}</div>
+      <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 800, color, marginBottom: 4 }}>
         {value}
       </div>
-      
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-        <div style={{ fontSize: 11, color: 'var(--text-dim)' }}>{sub}</div>
-        {delta && (
-          <div className="font-mono" style={{ fontSize: 11, color: color, display: 'flex', alignItems: 'center', gap: 4 }}>
-            <span>{delta > 0 ? '↗' : '↘'}</span> {delta}%
-          </div>
-        )}
-      </div>
+      <div style={{ fontSize: 11, color: '#5A7A5E', marginBottom: 8 }}>{sub}</div>
+      {delta && (
+        <div style={{ fontSize: 11, color: G, fontWeight: 600 }}>
+          ↑ +{delta}% vs mês anterior
+        </div>
+      )}
     </div>
   );
 
-  // Componente de Cliente em Risco (Log Style)
+  // Componente de Cliente em Risco
   const RiskClientCard = ({ client }) => (
-    <div className="panel" style={{
-      padding: '16px',
-      marginBottom: '12px',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '12px',
-      borderLeft: `2px solid var(--red)`
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+    <div
+      style={{
+        background: '#0E1410',
+        border: `2px solid ${R}`,
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 12,
+        transition: 'all 0.2s',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateX(4px)';
+        e.currentTarget.style.boxShadow = `0 0 20px ${R}33`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateX(0)';
+        e.currentTarget.style.boxShadow = 'none';
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
         <div>
-          <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--white)', marginBottom: 4 }}>{client.name}</div>
-          <div className="font-mono" style={{ fontSize: 10, color: 'var(--text-dim)' }}>ID: {client.id} | {client.niche}</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 4 }}>
+            {client.name}
+          </div>
+          <div style={{ fontSize: 11, color: '#5A7A5E' }}>
+            {client.niche} • Desde {client.since}
+          </div>
         </div>
-        <div className="font-mono" style={{
-          fontSize: 10,
-          background: 'rgba(255, 59, 48, 0.1)',
-          color: 'var(--red)',
-          padding: '4px 8px',
-          border: '1px solid rgba(255, 59, 48, 0.2)'
+        <span style={{
+          fontSize: 11,
+          fontWeight: 700,
+          padding: '4px 12px',
+          borderRadius: 100,
+          background: `${R}22`,
+          color: R,
         }}>
-          RISK_{client.churnRisk}
+          {client.churnRisk}% risco
+        </span>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
+        <div>
+          <div style={{ fontSize: 10, color: '#5A7A5E', marginBottom: 2 }}>Health</div>
+          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 18, fontWeight: 800, color: R }}>
+            {client.health}%
+          </div>
+        </div>
+        <div>
+          <div style={{ fontSize: 10, color: '#5A7A5E', marginBottom: 2 }}>MRR</div>
+          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 18, fontWeight: 800, color: '#E8F0EA' }}>
+            R$ {client.mrr.toLocaleString()}
+          </div>
+        </div>
+        <div>
+          <div style={{ fontSize: 10, color: '#5A7A5E', marginBottom: 2 }}>Leads/mês</div>
+          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 18, fontWeight: 800, color: B }}>
+            {client.leads}
+          </div>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', padding: '8px 0', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
-        <div>
-          <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>HEALTH</div>
-          <div className="font-mono" style={{ fontSize: 14, color: 'var(--red)' }}>{client.health}%</div>
-        </div>
-        <div>
-          <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>MRR</div>
-          <div className="font-mono" style={{ fontSize: 14, color: 'var(--white)' }}>R${client.mrr}</div>
-        </div>
-        <div>
-          <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>LEADS</div>
-          <div className="font-mono" style={{ fontSize: 14, color: 'var(--blue)' }}>{client.leads}</div>
-        </div>
-      </div>
+      <div style={{ height: 1, background: '#1A2A1C', margin: '12px 0' }} />
 
       <button style={{
-        background: 'transparent',
-        border: '1px solid var(--red)',
-        color: 'var(--red)',
-        padding: '8px',
-        fontSize: 11,
-        fontFamily: 'Inter, sans-serif',
+        background: `${R}22`,
+        border: `1px solid ${R}`,
+        color: R,
+        padding: '6px 12px',
+        borderRadius: 6,
         cursor: 'pointer',
-        textTransform: 'uppercase',
-        letterSpacing: '0.05em'
+        fontSize: 11,
+        fontWeight: 600,
+        width: '100%',
       }}>
-        INICIAR_RESGATE
+        Agendar Call com Cliente
       </button>
     </div>
   );
 
   // Componente de Insight
   const InsightCard = ({ insight }) => (
-    <div className="panel" style={{
-      padding: '16px',
-      marginBottom: '12px',
-      borderLeft: `2px solid var(--amber)`
+    <div style={{
+      background: '#0E1410',
+      border: '1px solid #1A2A1C',
+      borderRadius: 12,
+      padding: 20,
+      marginBottom: 12,
     }}>
-      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--amber)', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
-        <span className="font-mono" style={{ fontSize: 10 }}>[SYS_INSIGHT]</span>
+      <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 8 }}>
+        💡 {insight.title}
       </div>
-      <div style={{ fontSize: 13, color: 'var(--white)', marginBottom: 8, fontWeight: 500 }}>
-        {insight.title}
-      </div>
-      <div style={{ fontSize: 12, color: 'var(--text-dim)', marginBottom: 12, lineHeight: 1.5 }}>
+      <div style={{ fontSize: 12, color: '#5A7A5E', marginBottom: 12 }}>
         {insight.description}
       </div>
-      <div style={{ padding: '8px', background: 'var(--surface2)', border: '1px dashed var(--border)', display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{ fontSize: 11, color: 'var(--text)' }}>Ação: <span style={{ color: 'var(--green)' }}>{insight.action}</span></div>
-        <div className="font-mono" style={{ fontSize: 11, color: 'var(--green)' }}>{insight.impact}</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ fontSize: 11, color: '#5A7A5E' }}>
+          Ação: <span style={{ color: G, fontWeight: 600 }}>{insight.action}</span>
+        </div>
+        <div style={{ fontSize: 11, color: G, fontWeight: 600 }}>
+          {insight.impact}
+        </div>
       </div>
     </div>
   );
@@ -248,138 +254,140 @@ export default function AdminDashboardOtimizado() {
   const avgHealth = CLIENTS.length > 0 ? Math.round(CLIENTS.reduce((s, c) => s + c.health, 0) / CLIENTS.length) : 0;
 
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif", color: 'var(--text)', minHeight: '100vh', background: 'var(--black)' }}>
-      {/* Header (Console Style) */}
-      <div style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', padding: '16px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div style={{ width: 12, height: 12, background: 'var(--green)', borderRadius: '50%', boxShadow: '0 0 10px var(--green-glow)' }} />
+    <div style={{ fontFamily: "'DM Sans', sans-serif", color: '#E8F0EA', minHeight: '100vh', background: '#060908' }}>
+      {/* Header */}
+      <div style={{ background: '#0A0F0B', borderBottom: '1px solid #1A2A1C', padding: '16px 28px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div className="font-mono" style={{ fontWeight: 600, fontSize: 16, color: 'var(--white)', letterSpacing: '0.05em' }}>
-              MFL_SYS_ADMIN
+            <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 20, color: '#fff', marginBottom: 4 }}>
+              <span style={{ color: G }}>⬡</span> MFL Digital Solutions <span style={{ color: '#5A7A5E', fontWeight: 400 }}>Admin</span>
             </div>
-            <div className="font-mono" style={{ fontSize: 11, color: 'var(--text-dim)' }}>
-              UPTIME: 99.9% | {followupStatus?.alive ? `SCHEDULER_ACTIVE [${followupStatus.jobs_count}]` : 'SCHEDULER_OFFLINE'}
+            <div style={{ fontSize: 12, color: '#5A7A5E', display: 'flex', alignItems: 'center', gap: 12 }}>
+              <span>Painel de Controle</span>
+              {followupStatus && (
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: followupStatus.alive ? G : R, display: 'inline-block' }} />
+                  {followupStatus.alive ? `Scheduler Ativo (${followupStatus.jobs_count} jobs)` : 'Scheduler Offline!'}
+                </span>
+              )}
             </div>
           </div>
-        </div>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <button 
-            onClick={fetchData} 
-            disabled={dataLoading}
-            className="font-mono"
-            style={{
-              background: 'transparent',
-              border: '1px solid var(--border)',
-              color: 'var(--text)',
-              padding: '6px 12px',
-              fontSize: 11,
-              cursor: dataLoading ? 'not-allowed' : 'pointer',
-              opacity: dataLoading ? 0.6 : 1,
-              textTransform: 'uppercase'
-            }}
-          >
-            [ SYNC_DATA ]
-          </button>
-          <div className="font-mono" style={{
-            background: riskClients.length > 0 ? 'rgba(255,59,48,0.1)' : 'rgba(37,211,102,0.1)',
-            border: `1px solid ${riskClients.length > 0 ? 'var(--red)' : 'var(--green)'}`,
-            padding: '6px 12px',
-            fontSize: 11,
-            color: riskClients.length > 0 ? 'var(--red)' : 'var(--green)',
-          }}>
-            ERRORS: {riskClients.length}
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <button
+              onClick={fetchData}
+              disabled={dataLoading}
+              style={{
+                background: 'transparent',
+                border: `1px solid ${G}`,
+                color: G,
+                borderRadius: 8,
+                padding: '8px 16px',
+                fontSize: 12,
+                cursor: dataLoading ? 'not-allowed' : 'pointer',
+                opacity: dataLoading ? 0.6 : 1
+              }}
+            >
+              🔄 Sincronizar API
+            </button>
+            <div style={{
+              background: '#1A2A1C',
+              border: '1px solid #2A3A2C',
+              borderRadius: 8,
+              padding: '8px 16px',
+              fontSize: 12,
+              color: riskClients.length > 0 ? R : G,
+              fontWeight: 600,
+            }}>
+              {riskClients.length} ⚠️ clientes em risco
+            </div>
+            {/* Separator */}
+            <div style={{ width: 1, height: 24, background: '#1A2A1C' }} />
+            {/* Logout */}
+            <button
+              id="btn-logout-admin"
+              onClick={async () => {
+                try {
+                  await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+                } catch (_) {}
+                window.location.href = '/login';
+              }}
+              title="Sair da conta"
+              style={{
+                background: 'transparent',
+                border: '1px solid rgba(255,59,48,0.35)',
+                color: R,
+                borderRadius: 8,
+                padding: '8px 16px',
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(255,59,48,0.1)';
+                e.currentTarget.style.borderColor = R;
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.borderColor = 'rgba(255,59,48,0.35)';
+              }}
+            >
+              Sair
+            </button>
           </div>
-          {/* Separator */}
-          <div style={{ width: 1, height: 20, background: 'var(--border)' }} />
-          {/* User info */}
-          <div className="font-mono" style={{ fontSize: 11, color: 'var(--text-dim)' }}>
-            {user?.username || 'ADMIN'}
-          </div>
-          {/* Logout button */}
-          <button
-            id="btn-logout-admin"
-            onClick={handleLogout}
-            className="font-mono"
-            title="Sair da conta"
-            style={{
-              background: 'transparent',
-              border: '1px solid rgba(255,59,48,0.4)',
-              color: 'var(--red)',
-              padding: '6px 12px',
-              fontSize: 11,
-              cursor: 'pointer',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              transition: 'all 0.15s ease',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = 'rgba(255,59,48,0.12)';
-              e.currentTarget.style.borderColor = 'var(--red)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.borderColor = 'rgba(255,59,48,0.4)';
-            }}
-          >
-            [ EXIT_SESSION ]
-          </button>
         </div>
       </div>
 
-      {/* Main Layout 75/25 Asymmetric Tension */}
-      <div style={{ display: 'flex', minHeight: 'calc(100vh - 65px)', overflow: 'hidden' }}>
-        
-        {/* Main Content Area (75%) */}
-        <div style={{ flex: '3', padding: '32px', overflowY: 'auto', borderRight: '1px solid var(--border)' }}>
-          {/* Tabs */}
-          <div style={{ display: 'flex', gap: 24, borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 32 }}>
-            {[
-              ['overview', 'OVERVIEW'],
-              ['risk', 'RISK_ANALYSIS'],
-              ['forecast', 'FORECAST'],
-              ['insights', 'SYS_INSIGHTS'],
-            ].map(([id, label]) => (
-              <button
-                key={id}
-                onClick={() => setActiveTab(id)}
-                className="font-mono"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: activeTab === id ? 'var(--white)' : 'var(--text-dim)',
-                  fontSize: 12,
-                  fontWeight: activeTab === id ? 600 : 400,
-                  cursor: 'pointer',
-                  position: 'relative',
-                  letterSpacing: '0.05em'
-                }}
-              >
-                {label}
-                {activeTab === id && (
-                  <div style={{ position: 'absolute', bottom: -17, left: 0, right: 0, height: 2, background: 'var(--green)' }} />
-                )}
-              </button>
-            ))}
-          </div>
+      {/* Tabs */}
+      <div style={{ display: 'flex', borderBottom: '1px solid #1A2A1C', background: '#0A0F0B', padding: '0 28px' }}>
+        {[
+          ['overview', '🗂️ Visão Geral'],
+          ['risk', '⚠️ Clientes em Risco'],
+          ['forecast', '🔮 Previsões'],
+          ['insights', '💡 Insights'],
+          ['cohort', '📊 Análise de Cohort'],
+          ['automation', '⚙️ Automação'],
+        ].map(([id, label]) => (
+          <button
+            key={id}
+            onClick={() => setActiveTab(id)}
+            style={{
+              background: 'none',
+              border: 'none',
+              borderBottom: activeTab === id ? `2px solid ${G}` : '2px solid transparent',
+              color: activeTab === id ? G : '#5A7A5E',
+              padding: '14px 20px',
+              fontSize: 13,
+              fontWeight: activeTab === id ? 700 : 400,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              fontFamily: "'DM Sans', sans-serif",
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
 
-          {/* OVERVIEW */}
-          {activeTab === 'overview' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-              {/* KPIs */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: 'var(--border)', border: '1px solid var(--border)' }}>
-                <KPICard icon="DAT" label="MRR Total" value={`R$${fmt(totalMRR)}`} sub={`CLIENTS: ${CLIENTS.length}`} color="var(--green)" delta={22} />
-                <KPICard icon="REQ" label="Leads/mês" value={fmt(totalLeads)} sub="PROCESSED" color="var(--white)" delta={31} />
-                <KPICard icon="HLT" label="Health Médio" value={`${avgHealth}%`} sub="SYSTEM_SAT" color={avgHealth < 70 ? 'var(--amber)' : 'var(--green)'} delta={5} />
-                {tokenCosts ? (
-                  <KPICard icon="TOK" label="Cost OpenAI" value={`R$${fmt(tokenCosts.total_cost_brl || 0)}`} sub={`${fmt(tokenCosts.total_tokens || 0)} TOKENS`} color="var(--amber)" />
-                ) : (
-                  <KPICard icon="PRJ" label="ARR Proj" value={`R$${fmt(totalMRR * 12)}`} sub="ANNUAL" color="var(--white)" delta={22} />
-                )}
-              </div>
+      <div style={{ padding: '28px', maxWidth: 1200, margin: '0 auto' }}>
+        {/* OVERVIEW */}
+        {activeTab === 'overview' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            {/* KPIs */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+              <KPICard icon="💰" label="MRR Total" value={`R$ ${fmt(totalMRR)}`} sub={`${CLIENTS.length} clientes`} color={G} delta={22} />
+              <KPICard icon="📨" label="Leads/mês" value={fmt(totalLeads)} sub="processados" color={B} delta={31} />
+              <KPICard icon="❤️" label="Health Médio" value={`${avgHealth}%`} sub="satisfação" color="#E91E8C" delta={5} />
+              {tokenCosts ? (
+                <KPICard icon="🤖" label="Custo OpenAI" value={`R$ ${fmt(tokenCosts.total_cost_brl || 0)}`} sub={`${fmt(tokenCosts.total_tokens || 0)} tokens`} color={Y} />
+              ) : (
+                <KPICard icon="📅" label="ARR Projetado" value={`R$ ${fmt(totalMRR * 12)}`} sub="anualizado" color={Y} delta={22} />
+              )}
+            </div>
 
             {/* Sessão Dupla: Token Costs Progress e Pending Followups */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 20 }}>
-              
+
               {/* Token Costs */}
               <div style={{ background: '#0A0F0B', border: '1px solid #1A2A1C', borderRadius: 14, padding: 24 }}>
                 <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 20 }}>
@@ -417,7 +425,7 @@ export default function AdminDashboardOtimizado() {
                   {pendingFollowups.length > 0 ? pendingFollowups.map(lead => (
                     <div key={lead.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#0E1410', padding: '12px', borderRadius: 8, border: '1px solid #1A2A1C' }}>
                       <div>
-                        <div style={{ fontSize: 13, color: '#fff' }}>{lead.summary || `Lead ${lead.id}`} - <strong style={{color: B}}>{lead.phone}</strong></div>
+                        <div style={{ fontSize: 13, color: '#fff' }}>{lead.summary || `Lead ${lead.id}`} - <strong style={{ color: B }}>{lead.phone}</strong></div>
                         <div style={{ fontSize: 11, color: '#5A7A5E' }}>
                           Status: {lead.status} | Client ID: {lead.client_id}
                         </div>
@@ -427,66 +435,80 @@ export default function AdminDashboardOtimizado() {
                       </span>
                     </div>
                   )) : (
-                     <div style={{ fontSize: 12, color: '#5A7A5E', textAlign: 'center', padding: '20px 0' }}>
-                       Nenhum follow-up pendente no momento.
-                     </div>
+                    <div style={{ fontSize: 12, color: '#5A7A5E', textAlign: 'center', padding: '20px 0' }}>
+                      Nenhum follow-up pendente no momento.
+                    </div>
                   )}
                 </div>
               </div>
 
             </div>
 
-            {/* Status dos Clientes (System Log Style) */}
-            <div className="panel" style={{ padding: 24 }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-dim)', marginBottom: 20, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                CLIENT_NODES_STATUS
+            {/* Status dos Clientes */}
+            <div style={{ background: '#0A0F0B', border: '1px solid #1A2A1C', borderRadius: 14, padding: 24 }}>
+              <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 20 }}>
+                Status dos Clientes
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {CLIENTS.map(c => (
                   <div key={c.id} style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: 16,
-                    padding: '12px 16px',
-                    background: 'var(--surface2)',
-                    border: '1px solid var(--border)',
+                    padding: '14px 16px',
+                    background: '#0E1410',
+                    borderRadius: 10,
+                    border: '1px solid #1A2A1C',
                   }}>
-                    <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <div style={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        background: c.health >= 80 ? 'var(--green)' : c.health >= 60 ? 'var(--amber)' : 'var(--red)',
-                        boxShadow: `0 0 8px ${c.health >= 80 ? 'var(--green)' : c.health >= 60 ? 'var(--amber)' : 'var(--red)'}`
-                      }} />
-                      <div>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--white)' }}>{c.name}</div>
-                        <div className="font-mono" style={{ fontSize: 10, color: 'var(--text-dim)' }}>ID: {c.id} · {c.niche}</div>
+                    <div style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: '50%',
+                      background: c.color + '22',
+                      border: `2px solid ${c.color}`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 14,
+                    }}>
+                      {c.niche === 'Imobiliária' ? '🏠' : c.niche.includes('Estética') ? '💆' : '🏥'}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: '#E8F0EA' }}>{c.name}</div>
+                      <div style={{ fontSize: 11, color: '#5A7A5E' }}>{c.niche} · {c.since}</div>
+                    </div>
+                    <div style={{ textAlign: 'center', minWidth: 60 }}>
+                      <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 18, fontWeight: 800, color: c.color }}>
+                        R$ {fmt(c.mrr)}
+                      </div>
+                      <div style={{ fontSize: 10, color: '#5A7A5E' }}>/mês</div>
+                    </div>
+                    <div style={{ minWidth: 120 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <span style={{ fontSize: 10, color: '#5A7A5E' }}>Health</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: c.health >= 80 ? G : c.health >= 60 ? Y : R }}>
+                          {c.health}%
+                        </span>
+                      </div>
+                      <div style={{ height: 4, background: '#1A2A1C', borderRadius: 2, overflow: 'hidden' }}>
+                        <div style={{
+                          height: '100%',
+                          width: `${c.health}%`,
+                          background: c.health >= 80 ? G : c.health >= 60 ? Y : R,
+                          borderRadius: 2,
+                        }} />
                       </div>
                     </div>
-                    
-                    <div className="font-mono" style={{ textAlign: 'right', minWidth: 100 }}>
-                      <div style={{ fontSize: 13, color: 'var(--white)' }}>R${c.mrr}</div>
-                      <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>/MONTH</div>
-                    </div>
-                    
-                    <div className="font-mono" style={{ minWidth: 80, textAlign: 'right' }}>
-                      <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>HLT</div>
-                      <div style={{ fontSize: 13, color: c.health >= 80 ? 'var(--green)' : c.health >= 60 ? 'var(--amber)' : 'var(--red)' }}>
-                        {c.health}%
-                      </div>
-                    </div>
-
-                    <div className="font-mono" style={{ minWidth: 80, textAlign: 'right' }}>
-                       <span style={{
-                         fontSize: 10,
-                         padding: '2px 6px',
-                         border: `1px solid ${c.status === 'active' ? 'var(--green)' : 'var(--red)'}`,
-                         color: c.status === 'active' ? 'var(--green)' : 'var(--red)',
-                       }}>
-                         {c.status === 'active' ? 'ONLINE' : 'WARN'}
-                       </span>
-                    </div>
+                    <span style={{
+                      fontSize: 11,
+                      padding: '3px 10px',
+                      borderRadius: 100,
+                      background: c.status === 'active' ? `${G}22` : `${R}22`,
+                      color: c.status === 'active' ? G : R,
+                      fontWeight: 700,
+                    }}>
+                      {c.status === 'active' ? '● Ativo' : '⚠️ Atenção'}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -497,13 +519,12 @@ export default function AdminDashboardOtimizado() {
         {/* CLIENTES EM RISCO */}
         {activeTab === 'risk' && (
           <div>
-            <div style={{ marginBottom: 24, borderBottom: '1px solid var(--border)', paddingBottom: 16 }}>
-              <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--red)', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span className="font-mono" style={{ background: 'var(--red)', color: 'var(--black)', padding: '2px 6px', fontSize: 12 }}>SYS_WARN</span>
-                ATENÇÃO IMEDIATA REQUERIDA
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 8 }}>
+                ⚠️ Clientes em Risco de Churn
               </div>
-              <div className="font-mono" style={{ fontSize: 11, color: 'var(--text-dim)' }}>
-                {riskClients.length} NODE(S) BELOW 70% HEALTH THRESHOLD
+              <div style={{ fontSize: 12, color: '#5A7A5E' }}>
+                {riskClients.length} cliente(s) com health &lt; 70% requer(em) atenção imediata
               </div>
             </div>
 
@@ -512,12 +533,19 @@ export default function AdminDashboardOtimizado() {
             ))}
 
             {riskClients.length === 0 && (
-              <div className="panel" style={{ padding: 40, textAlign: 'center', border: '1px solid var(--green)' }}>
-                <div className="font-mono" style={{ fontSize: 16, color: 'var(--green)', marginBottom: 8 }}>
-                  [ ALL_SYSTEMS_NOMINAL ]
+              <div style={{
+                background: '#0E1410',
+                border: '1px solid #1A2A1C',
+                borderRadius: 12,
+                padding: 40,
+                textAlign: 'center',
+              }}>
+                <div style={{ fontSize: 32, marginBottom: 12 }}>✓</div>
+                <div style={{ fontSize: 13, color: G, fontWeight: 600, marginBottom: 4 }}>
+                  Excelente! Nenhum cliente em risco
                 </div>
-                <div className="font-mono" style={{ fontSize: 12, color: 'var(--text-dim)' }}>
-                  0 CLIENTS BELOW HEALTH THRESHOLD
+                <div style={{ fontSize: 12, color: '#5A7A5E' }}>
+                  Todos os seus clientes têm health > 70%
                 </div>
               </div>
             )}
@@ -815,81 +843,6 @@ export default function AdminDashboardOtimizado() {
             </div>
           </div>
         )}
-        </div>
-
-        {/* Action Sidebar Area (25%) */}
-        <div style={{ flex: '1', minWidth: 320, background: 'var(--surface)', display: 'flex', flexDirection: 'column' }}>
-          
-          {/* Section: Tokens / Costs */}
-          <div style={{ padding: '24px', borderBottom: '1px solid var(--border)' }}>
-            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-dim)', marginBottom: 20, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              SYS_BUDGET (OPENAI)
-            </div>
-            {tokenCosts ? (
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                  <span className="font-mono" style={{ fontSize: 11, color: 'var(--text)' }}>
-                    USAGE: {((tokenCosts.total_cost_brl / 500) * 100).toFixed(1)}%
-                  </span>
-                  <span className="font-mono" style={{ fontSize: 11, color: 'var(--green)' }}>
-                    R${tokenCosts.total_cost_brl} / 500
-                  </span>
-                </div>
-                <div style={{ height: 4, background: 'var(--surface2)', overflow: 'hidden', border: '1px solid var(--border)' }}>
-                  <div style={{
-                    height: '100%',
-                    width: `${Math.min((tokenCosts.total_cost_brl / 500) * 100, 100)}%`,
-                    background: (tokenCosts.total_cost_brl / 500) > 0.8 ? 'var(--red)' : 'var(--green)',
-                  }} />
-                </div>
-              </div>
-            ) : (
-              <div className="font-mono" style={{ fontSize: 11, color: 'var(--text-dim)' }}>[ LOADING_DATA... ]</div>
-            )}
-          </div>
-
-          {/* Section: Action Feed */}
-          <div style={{ padding: '24px', flex: 1, overflowY: 'auto' }}>
-            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-dim)', marginBottom: 20, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              ACTION_FEED
-            </div>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {pendingFollowups.length > 0 ? pendingFollowups.map(lead => (
-                <div key={lead.id} style={{ 
-                  padding: '12px', 
-                  borderLeft: `2px solid ${lead.classification === 'hot' ? 'var(--red)' : 'var(--amber)'}`, 
-                  background: 'var(--surface2)',
-                  borderTop: '1px solid var(--border)',
-                  borderRight: '1px solid var(--border)',
-                  borderBottom: '1px solid var(--border)',
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-                    <div style={{ fontSize: 13, color: 'var(--white)' }}>{lead.summary || `Lead ${lead.id}`}</div>
-                    <span className="font-mono" style={{ 
-                      fontSize: 10, 
-                      color: lead.classification === 'hot' ? 'var(--red)' : 'var(--amber)',
-                      background: lead.classification === 'hot' ? 'rgba(255, 59, 48, 0.1)' : 'rgba(255, 160, 0, 0.1)',
-                      padding: '2px 4px',
-                      border: `1px solid ${lead.classification === 'hot' ? 'rgba(255, 59, 48, 0.2)' : 'rgba(255, 160, 0, 0.2)'}`
-                    }}>
-                      {lead.classification.toUpperCase()}
-                    </span>
-                  </div>
-                  <div className="font-mono" style={{ fontSize: 11, color: 'var(--text-dim)', display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--blue)' }}>{lead.phone}</span>
-                    <span>T-{Math.round(lead.hours_since)}H</span>
-                  </div>
-                </div>
-              )) : (
-                <div className="font-mono" style={{ fontSize: 11, color: 'var(--text-dim)', textAlign: 'center', padding: '20px 0' }}>
-                  [ NO_PENDING_ACTIONS ]
-                </div>
-              )}
-            </div>
-          </div>
-          
-        </div>
       </div>
     </div>
   );

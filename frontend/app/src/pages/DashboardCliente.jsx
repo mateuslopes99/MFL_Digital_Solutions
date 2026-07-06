@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth.jsx';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 /**
@@ -17,26 +15,17 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
  */
 
 export default function ClientDashboardOtimizado() {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
-
   const [activeTab, setActiveTab] = useState('overview');
 
-  const CLIENT_ID = user?.client_id || 1;
-
   const [clientData, setClientData] = useState(null);
-
-  async function handleLogout() {
-    await logout();
-    navigate('/login', { replace: true });
-  }
+  const CLIENT_ID = 1; // ID chumbado para demo; na produção, virá do contexto/auth
 
   useEffect(() => {
-    fetch(`/api/dashboard/client/${CLIENT_ID}/overview`, { credentials: 'omit' })
+    fetch(`http://localhost:5001/api/dashboard/client/${CLIENT_ID}/overview`, { credentials: 'omit' })
       .then(res => res.json())
       .then(data => setClientData(data))
       .catch(err => console.error("Erro overview cliente:", err));
-  }, [CLIENT_ID]);
+  }, []);
   
   const G = '#00C853'; // Verde primário
   const R = '#FF5252'; // Vermelho para alertas
@@ -295,46 +284,12 @@ export default function ClientDashboardOtimizado() {
     <div style={{ fontFamily: "'DM Sans', sans-serif", color: '#E8F0EA', minHeight: '100vh', background: '#060908' }}>
       {/* Header */}
       <div style={{ background: '#0A0F0B', borderBottom: '1px solid #1A2A1C', padding: '16px 28px' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 20, color: '#fff', marginBottom: 4 }}>
-              <span style={{ color: G }}>⬡</span> MFL Digital Solutions
-            </div>
-            <div style={{ fontSize: 12, color: '#5A7A5E' }}>
-              Dashboard de Resultados {user?.name ? `— ${user.name}` : ''}
-            </div>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 20, color: '#fff', marginBottom: 4 }}>
+            <span style={{ color: G }}>⬡</span> MFL Digital Solutions
           </div>
-          {/* Logout */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ fontSize: 12, color: '#5A7A5E' }}>
-              {user?.username || ''}
-            </div>
-            <button
-              id="btn-logout-client"
-              onClick={handleLogout}
-              title="Sair da conta"
-              style={{
-                background: 'transparent',
-                border: '1px solid rgba(0,200,83,0.3)',
-                color: G,
-                padding: '7px 16px',
-                borderRadius: 8,
-                fontSize: 12,
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = 'rgba(0,200,83,0.1)';
-                e.currentTarget.style.borderColor = G;
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = 'transparent';
-                e.currentTarget.style.borderColor = 'rgba(0,200,83,0.3)';
-              }}
-            >
-              Sair da conta
-            </button>
+          <div style={{ fontSize: 12, color: '#5A7A5E' }}>
+            Dashboard de Resultados - Imobiliária Silva & Cia
           </div>
         </div>
       </div>
