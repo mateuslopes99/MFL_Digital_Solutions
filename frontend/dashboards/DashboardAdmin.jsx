@@ -272,7 +272,7 @@ export default function AdminDashboardOtimizado() {
               )}
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 12 }}>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             <button
               onClick={fetchData}
               disabled={dataLoading}
@@ -300,6 +300,40 @@ export default function AdminDashboardOtimizado() {
             }}>
               {riskClients.length} ⚠️ clientes em risco
             </div>
+            {/* Separator */}
+            <div style={{ width: 1, height: 24, background: '#1A2A1C' }} />
+            {/* Logout */}
+            <button
+              id="btn-logout-admin"
+              onClick={async () => {
+                try {
+                  await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+                } catch (_) {}
+                window.location.href = '/login';
+              }}
+              title="Sair da conta"
+              style={{
+                background: 'transparent',
+                border: '1px solid rgba(255,59,48,0.35)',
+                color: R,
+                borderRadius: 8,
+                padding: '8px 16px',
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(255,59,48,0.1)';
+                e.currentTarget.style.borderColor = R;
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.borderColor = 'rgba(255,59,48,0.35)';
+              }}
+            >
+              Sair
+            </button>
           </div>
         </div>
       </div>
