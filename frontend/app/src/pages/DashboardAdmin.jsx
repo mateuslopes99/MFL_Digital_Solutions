@@ -14,6 +14,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
  * 6. ✅ Integração Real: Scheduler, Token Costs e Follow-ups Pendentes
  */
 
+const API_BASE = import.meta.env.VITE_API_URL || 'https://mfl-backend.onrender.com';
+
 export default function AdminDashboardOtimizado() {
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -23,15 +25,23 @@ export default function AdminDashboardOtimizado() {
 
   const [overviewData, setOverviewData] = useState(null);
   const [dataLoading, setDataLoading] = useState(false);
+  const [authError, setAuthError] = useState(null);
+
+  const handleFetchError = (r) => {
+    if (r.status === 401 || r.status === 403) {
+      throw new Error("Sessão expirada ou acesso negado — faça login novamente");
+    }
+    return r.json();
+  };
 
   const fetchData = () => {
     setDataLoading(true);
 
     Promise.all([
-      fetch('http://localhost:5001/api/dashboard/admin/overview', { credentials: 'omit' }).then(r => r.json()),
-      fetch('http://localhost:5001/api/dashboard/admin/followup/status', { credentials: 'omit' }).then(r => r.json()),
-      fetch('http://localhost:5001/api/dashboard/admin/token-costs', { credentials: 'omit' }).then(r => r.json()),
-      fetch('http://localhost:5001/api/dashboard/admin/followup/leads', { credentials: 'omit' }).then(r => r.json())
+      fetch(`${API_BASE}/api/dashboard/admin/overview`, { credentials: 'include' }).then(handleFetchError),
+      fetch(`${API_BASE}/api/dashboard/admin/followup/status`, { credentials: 'include' }).then(handleFetchError),
+      fetch(`${API_BASE}/api/dashboard/admin/token-costs`, { credentials: 'include' }).then(handleFetchError),
+      fetch(`${API_BASE}/api/dashboard/admin/followup/leads`, { credentials: 'include' }).then(handleFetchError)
     ]).then(([overview, status, tokens, follows]) => {
       setOverviewData(overview);
       setFollowupStatus(status);
@@ -39,6 +49,7 @@ export default function AdminDashboardOtimizado() {
       setPendingFollowups(follows.leads || []);
     }).catch(err => {
       console.error("Erro no sincronismo da API:", err);
+      setAuthError(err.message);
     }).finally(() => {
       setDataLoading(false);
     });
@@ -255,6 +266,11 @@ export default function AdminDashboardOtimizado() {
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif", color: '#E8F0EA', minHeight: '100vh', background: '#060908' }}>
+      {authError && (
+        <div style={{ background: '#FF5252', color: 'white', padding: '12px 28px', textAlign: 'center', fontWeight: 'bold' }}>
+          {authError}
+        </div>
+      )}
       {/* Header */}
       <div style={{ background: '#0A0F0B', borderBottom: '1px solid #1A2A1C', padding: '16px 28px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -545,7 +561,7 @@ export default function AdminDashboardOtimizado() {
                   Excelente! Nenhum cliente em risco
                 </div>
                 <div style={{ fontSize: 12, color: '#5A7A5E' }}>
-                  Todos os seus clientes têm health > 70%
+                  Todos os seus clientes têm health &gt; 70%
                 </div>
               </div>
             )}

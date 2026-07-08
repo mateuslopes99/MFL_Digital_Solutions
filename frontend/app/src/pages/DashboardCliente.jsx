@@ -14,17 +14,28 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
  * 6. ✅ Dashboard Client Integrado (API fetch real)
  */
 
+const API_BASE = import.meta.env.VITE_API_URL || 'https://mfl-backend.onrender.com';
+
 export default function ClientDashboardOtimizado() {
   const [activeTab, setActiveTab] = useState('overview');
 
   const [clientData, setClientData] = useState(null);
+  const [authError, setAuthError] = useState(null);
   const CLIENT_ID = 1; // ID chumbado para demo; na produção, virá do contexto/auth
 
   useEffect(() => {
-    fetch(`http://localhost:5001/api/dashboard/client/${CLIENT_ID}/overview`, { credentials: 'omit' })
-      .then(res => res.json())
+    fetch(`${API_BASE}/api/dashboard/client/${CLIENT_ID}/overview`, { credentials: 'include' })
+      .then(res => {
+        if (res.status === 401 || res.status === 403) {
+          throw new Error("Sessão expirada ou acesso negado — faça login novamente");
+        }
+        return res.json();
+      })
       .then(data => setClientData(data))
-      .catch(err => console.error("Erro overview cliente:", err));
+      .catch(err => {
+        console.error("Erro overview cliente:", err);
+        setAuthError(err.message);
+      });
   }, []);
   
   const G = '#00C853'; // Verde primário
@@ -282,6 +293,11 @@ export default function ClientDashboardOtimizado() {
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif", color: '#E8F0EA', minHeight: '100vh', background: '#060908' }}>
+      {authError && (
+        <div style={{ background: '#FF5252', color: 'white', padding: '12px 28px', textAlign: 'center', fontWeight: 'bold' }}>
+          {authError}
+        </div>
+      )}
       {/* Header */}
       <div style={{ background: '#0A0F0B', borderBottom: '1px solid #1A2A1C', padding: '16px 28px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
