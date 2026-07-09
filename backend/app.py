@@ -82,10 +82,6 @@ def create_app():
 
     app.config.update(
         SECRET_KEY=secret,
-        SESSION_COOKIE_HTTPONLY=True,
-        SESSION_COOKIE_SAMESITE="None",
-        SESSION_COOKIE_SECURE=True,
-        PERMANENT_SESSION_LIFETIME=timedelta(hours=8),
         PROPAGATE_EXCEPTIONS=True,
     )
 

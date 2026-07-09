@@ -8,13 +8,14 @@ Somente acessíveis pelo Admin.
 import os
 import sys
 import hashlib
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify, g
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from database import get_connection
 from modules.health_score import calculate_health_score
 
 clients_bp = Blueprint("clients", __name__)
+from .auth_routes import token_required
 
 
 # ── Utilitários ────────────────────────────────────────────────────────────────
@@ -24,7 +25,7 @@ def hash_password(password: str) -> str:
 
 
 def require_admin():
-    user = session.get("user")
+    user = g.user
     return user and user.get("role") == "admin"
 
 
@@ -39,11 +40,10 @@ PLAN_TO_MRR = {
 # ── Endpoints ──────────────────────────────────────────────────────────────────
 
 @clients_bp.route("/", methods=["GET"])
+@token_required
 def list_clients():
     """Lista todos os clientes (admin) ou apenas o próprio (cliente)."""
-    user = session.get("user")
-    if not user:
-        return jsonify({"error": "Não autenticado"}), 401
+    user = g.user
 
     conn   = get_connection()
     cursor = conn.cursor()
@@ -77,6 +77,7 @@ def list_clients():
 
 
 @clients_bp.route("/", methods=["POST"])
+@token_required
 def create_client():
     """Cria um novo cliente. Somente admin."""
     if not require_admin():
@@ -129,11 +130,10 @@ def create_client():
 
 
 @clients_bp.route("/<int:client_id>", methods=["GET"])
+@token_required
 def get_client(client_id):
     """Retorna dados de um cliente específico."""
-    user = session.get("user")
-    if not user:
-        return jsonify({"error": "Não autenticado"}), 401
+    user = g.user
 
     # Cliente só pode ver seus próprios dados
     if user["role"] == "client" and user["client_id"] != client_id:
@@ -162,11 +162,10 @@ def get_client(client_id):
 
 
 @clients_bp.route("/<int:client_id>/health-score", methods=["GET"])
+@token_required
 def get_health_score(client_id):
     """Retorna o health score detalhado de um cliente."""
-    user = session.get("user")
-    if not user:
-        return jsonify({"error": "Não autenticado"}), 401
+    user = g.user
     if user["role"] == "client" and user["client_id"] != client_id:
         return jsonify({"error": "Acesso negado"}), 403
 
@@ -175,11 +174,10 @@ def get_health_score(client_id):
 
 
 @clients_bp.route("/<int:client_id>", methods=["PUT"])
+@token_required
 def update_client(client_id):
     """Atualiza dados de um cliente."""
-    user = session.get("user")
-    if not user:
-        return jsonify({"error": "Não autenticado"}), 401
+    user = g.user
 
     # Clientes só podem atualizar a si mesmos e somente campos específicos
     if user["role"] == "client":
@@ -221,6 +219,7 @@ def update_client(client_id):
 
 
 @clients_bp.route("/<int:client_id>", methods=["DELETE"])
+@token_required
 def deactivate_client(client_id):
     """Desativa um cliente (soft delete). Somente admin."""
     if not require_admin():
@@ -238,6 +237,7 @@ def deactivate_client(client_id):
 
 
 @clients_bp.route("/<int:client_id>/reset-password", methods=["POST"])
+@token_required
 def reset_password(client_id):
     """Admin redefine a senha de um cliente."""
     if not require_admin():

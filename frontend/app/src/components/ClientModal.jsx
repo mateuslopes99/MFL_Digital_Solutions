@@ -70,8 +70,10 @@ export default function ClientModal({ isOpen, onClose, onSaved, editClient = nul
 
             const res = await fetch(url, {
                 method,
-                credentials: 'include',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('mfl_token')
+                },
                 body: JSON.stringify(form),
             });
             const data = await res.json();

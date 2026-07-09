@@ -11,7 +11,10 @@ import os
 import hashlib
 import sys
 import logging
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify, g, current_app
+import jwt
+from functools import wraps
+from datetime import datetime, timezone, timedelta
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from database import get_connection
@@ -54,6 +57,32 @@ def check_admin_credentials(username: str, password: str) -> bool:
     return username == admin_user and password == admin_pass
 
 
+# ── Decorator JWT ──────────────────────────────────────────────────────────────
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if "Authorization" in request.headers:
+            auth_header = request.headers["Authorization"]
+            if auth_header.startswith("Bearer "):
+                token = auth_header.split(" ")[1]
+        
+        if not token:
+            return jsonify({"error": "Token ausente", "authenticated": False}), 401
+            
+        try:
+            data = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])
+            g.user = data["user"]
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error": "Token expirado", "authenticated": False}), 401
+        except Exception:
+            return jsonify({"error": "Token inválido", "authenticated": False}), 401
+            
+        return f(*args, **kwargs)
+    return decorated
+
+
 # ── Endpoints ──────────────────────────────────────────────────────────────────
 
 @auth_bp.route("/login", methods=["POST"])
@@ -76,14 +105,17 @@ def login():
     # ── Admin ──────────────────────────────────────────────────────────────────
     if role == "admin":
         if check_admin_credentials(username, password):
-            session.permanent = True
-            session["user"] = {
-                "username":  username,
-                "role":      "admin",
-                "name":      "Administrador MFL",
-                "client_id": None
+            payload = {
+                "user": {
+                    "username":  username,
+                    "role":      "admin",
+                    "name":      "Administrador MFL",
+                    "client_id": None
+                },
+                "exp": datetime.now(timezone.utc) + timedelta(hours=12)
             }
-            return jsonify({"success": True, "role": "admin"})
+            token = jwt.encode(payload, current_app.config["SECRET_KEY"], algorithm="HS256")
+            return jsonify({"success": True, "role": "admin", "token": token})
         return jsonify({"success": False, "error": "Credenciais de administrador inválidas"}), 401
 
     # ── Cliente ────────────────────────────────────────────────────────────────
@@ -118,20 +150,24 @@ def login():
             except Exception:
                 pass
         if client and verify_password(password, client["password_hash"] or ""):
-            session.permanent = True
-            session["user"] = {
-                "username":  username,
-                "role":      "client",
-                "name":      client["name"],
-                "niche":     client["niche"],
-                "package":   client["package"],
-                "client_id": client["id"]
+            payload = {
+                "user": {
+                    "username":  username,
+                    "role":      "client",
+                    "name":      client["name"],
+                    "niche":     client["niche"],
+                    "package":   client["package"],
+                    "client_id": client["id"]
+                },
+                "exp": datetime.now(timezone.utc) + timedelta(hours=12)
             }
+            token = jwt.encode(payload, current_app.config["SECRET_KEY"], algorithm="HS256")
             return jsonify({
                 "success": True,
                 "role":      "client",
                 "client_id": client["id"],
-                "name":      client["name"]
+                "name":      client["name"],
+                "token":     token
             })
 
         return jsonify({"success": False, "error": "Usuário ou senha incorretos"}), 401
@@ -141,24 +177,22 @@ def login():
 
 @auth_bp.route("/logout", methods=["POST"])
 def logout():
-    """Encerra a sessão do usuário."""
-    session.clear()
+    """O JWT fica no cliente. Apenas retornamos sucesso."""
     return jsonify({"success": True})
 
 
 @auth_bp.route("/me", methods=["GET"])
+@token_required
 def me():
-    """Retorna dados do usuário autenticado ou 401."""
-    user = session.get("user")
-    if not user:
-        return jsonify({"authenticated": False}), 401
-    return jsonify({"authenticated": True, **user})
+    """Retorna dados do usuário autenticado validando o token JWT."""
+    return jsonify({"authenticated": True, **g.user})
 
 
 @auth_bp.route("/change-password", methods=["POST"])
+@token_required
 def change_password():
     """Permite ao cliente mudar própria senha."""
-    user = session.get("user")
+    user = g.user
     if not user or user["role"] != "client":
         return jsonify({"error": "Não autorizado"}), 403
 

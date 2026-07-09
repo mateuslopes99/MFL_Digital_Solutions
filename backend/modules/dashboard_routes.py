@@ -6,7 +6,8 @@ Fornece dados para os dashboards Admin e Cliente.
 
 import os
 import sys
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, jsonify, request, g
+from .auth_routes import token_required
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from database import get_connection, _IS_POSTGRES
@@ -25,9 +26,10 @@ def _date_offset(days: int) -> str:
 
 
 @dashboard_bp.route("/admin/overview", methods=["GET"])
+@token_required
 def admin_overview():
     """Retorna visão geral para o dashboard admin."""
-    user = session.get("user")
+    user = g.user
     if not user or user.get("role") != "admin":
         return jsonify({"error": "Acesso restrito ao administrador"}), 403
 
@@ -105,11 +107,10 @@ def admin_overview():
 
 
 @dashboard_bp.route("/client/<int:client_id>/overview", methods=["GET"])
+@token_required
 def client_overview(client_id):
     """Retorna métricas enriquecidas para o dashboard do cliente."""
-    user = session.get("user")
-    if not user:
-        return jsonify({"error": "Não autenticado"}), 401
+    user = g.user
     # Clientes só podem ver seus próprios dados; admin pode ver qualquer um
     if user.get("role") == "client" and user.get("client_id") != client_id:
         return jsonify({"error": "Acesso negado"}), 403
@@ -285,6 +286,7 @@ def client_overview(client_id):
 # ── Health Check Automático ─────────────────────────────────────────────────────
 
 @dashboard_bp.route("/admin/run-health-check", methods=["POST"])
+@token_required
 def run_health_check():
     """
     Verifica a saúde de todos os clientes ativos:
@@ -292,7 +294,7 @@ def run_health_check():
     - Envia alerta WhatsApp ao admin para críticos (score < 50)
     - Envia e-mail semanal ao cliente
     """
-    user = session.get("user")
+    user = g.user
     if not user or user.get("role") != "admin":
         return jsonify({"error": "Acesso restrito ao admin"}), 403
 
@@ -346,9 +348,10 @@ def run_health_check():
 
 
 @dashboard_bp.route("/admin/clients/<int:client_id>/history", methods=["GET"])
+@token_required
 def client_health_history(client_id):
     """Retorna o histórico de health score de um cliente (admin only)."""
-    user = session.get("user")
+    user = g.user
     if not user or user.get("role") != "admin":
         return jsonify({"error": "Acesso restrito ao admin"}), 403
 
@@ -358,11 +361,10 @@ def client_health_history(client_id):
 
 
 @dashboard_bp.route("/client/me/history", methods=["GET"])
+@token_required
 def my_health_history():
     """Retorna o histórico de health score do cliente logado."""
-    user = session.get("user")
-    if not user:
-        return jsonify({"error": "Não autenticado"}), 401
+    user = g.user
     if user.get("role") != "client":
         return jsonify({"error": "Acesso apenas para clientes"}), 403
 
@@ -375,14 +377,13 @@ def my_health_history():
 # ── Endpoints de Custo de Tokens (Fase 2) ─────────────────────────────────────
 
 @dashboard_bp.route("/admin/clients/<int:client_id>/token-cost", methods=["GET"])
+@token_required
 def client_token_cost(client_id):
     """
     Retorna o custo de tokens do mês corrente para um cliente.
     Inclui alerta se estiver acima de 80% do budget.
     """
-    user = session.get("user")
-    if not user:
-        return jsonify({"error": "Não autenticado"}), 401
+    user = g.user
 
     # Admin vê qualquer cliente; cliente vê apenas o próprio
     if user["role"] == "client" and user.get("client_id") != client_id:
@@ -398,9 +399,10 @@ def client_token_cost(client_id):
 
 
 @dashboard_bp.route("/admin/token-costs", methods=["GET"])
+@token_required
 def all_token_costs():
     """Retorna custo de tokens de todos os clientes ativos (admin only)."""
-    user = session.get("user")
+    user = g.user
     if not user or user["role"] != "admin":
         return jsonify({"error": "Acesso restrito ao admin"}), 403
 
@@ -439,9 +441,10 @@ def all_token_costs():
 
 
 @dashboard_bp.route("/admin/followup/status", methods=["GET"])
+@token_required
 def followup_status():
     """Retorna status do scheduler de follow-ups (admin only)."""
-    user = session.get("user")
+    user = g.user
     if not user or user["role"] != "admin":
         return jsonify({"error": "Acesso restrito ao admin"}), 403
 
@@ -456,9 +459,10 @@ def followup_status():
 
 
 @dashboard_bp.route("/admin/followup/leads", methods=["GET"])
+@token_required
 def followup_leads_pending():
     """Lista leads com follow-up pendente (admin only)."""
-    user = session.get("user")
+    user = g.user
     if not user or user["role"] != "admin":
         return jsonify({"error": "Acesso restrito ao admin"}), 403
 

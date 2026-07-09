@@ -16,8 +16,8 @@ export function useAdminDashboard() {
         setLoading(true);
         try {
             const [clientsRes, overviewRes] = await Promise.all([
-                fetch(`${API_BASE}/api/clients/`, { credentials: 'include' }),
-                fetch(`${API_BASE}/api/dashboard/admin/overview`, { credentials: 'include' }),
+                fetch(`${API_BASE}/api/clients/`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('mfl_token') } }),
+                fetch(`${API_BASE}/api/dashboard/admin/overview`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('mfl_token') } }),
             ]);
 
             if (!clientsRes.ok || !overviewRes.ok) {
@@ -71,7 +71,7 @@ export function useAdminDashboard() {
 export async function runHealthCheck() {
     const res = await fetch(`${API_BASE}/api/dashboard/admin/run-health-check`, {
         method: 'POST',
-        credentials: 'include',
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('mfl_token') },
     });
     return res.json();
 }
@@ -87,7 +87,7 @@ export function useHealthHistory(clientId) {
         try {
             const res = await fetch(
                 `${API_BASE}/api/dashboard/admin/clients/${clientId}/history?weeks=12`,
-                { credentials: 'include' }
+                { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('mfl_token') } }
             );
             if (res.ok) {
                 const d = await res.json();
@@ -115,8 +115,8 @@ export function useClientDashboard(clientId) {
         setLoading(true);
         try {
             const [overviewRes, leadsRes] = await Promise.all([
-                fetch(`${API_BASE}/api/dashboard/client/${clientId}/overview`, { credentials: 'include' }),
-                fetch(`${API_BASE}/api/leads/?client_id=${clientId}&limit=100`, { credentials: 'include' }),
+                fetch(`${API_BASE}/api/dashboard/client/${clientId}/overview`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('mfl_token') } }),
+                fetch(`${API_BASE}/api/leads/?client_id=${clientId}&limit=100`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('mfl_token') } }),
             ]);
             if (!overviewRes.ok || !leadsRes.ok) throw new Error('Erro ao carregar dados do cliente');
 

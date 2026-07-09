@@ -8,21 +8,13 @@ Clientes só veem seus próprios leads (isolamento por client_id).
 
 import os
 import sys
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, jsonify, request, g
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from database import get_leads, get_connection, get_followup_log
+from .auth_routes import token_required
 
 leads_bp = Blueprint("leads", __name__)
-
-
-# ── Guard de Autenticação Global ──────────────────────────────────────────────
-
-@leads_bp.before_request
-def require_auth():
-    """Aplica autenticação em TODAS as rotas deste blueprint."""
-    if not session.get("user"):
-        return jsonify({"error": "Não autenticado"}), 401
 
 
 def _assert_lead_access(lead: dict) -> bool:
@@ -30,7 +22,7 @@ def _assert_lead_access(lead: dict) -> bool:
     Verifica se o usuário logado tem direito de ver/editar este lead.
     Admin → acesso total. Cliente → somente leads do seu client_id.
     """
-    user = session.get("user")
+    user = g.user
     if user["role"] == "admin":
         return True
     return lead.get("client_id") == user.get("client_id")
@@ -39,9 +31,10 @@ def _assert_lead_access(lead: dict) -> bool:
 # ── Endpoints ─────────────────────────────────────────────────────────────────
 
 @leads_bp.route("/", methods=["GET"])
+@token_required
 def list_leads():
     """Lista leads com filtros opcionais. Clientes só veem os próprios."""
-    user           = session.get("user")
+    user           = g.user
     classification = request.args.get("classification")
     status         = request.args.get("status")
     search         = request.args.get("q", "").strip()
@@ -67,6 +60,7 @@ def list_leads():
 
 
 @leads_bp.route("/<int:lead_id>", methods=["GET"])
+@token_required
 def get_lead(lead_id):
     """Retorna detalhes de um lead específico."""
     conn = get_connection()
@@ -86,6 +80,7 @@ def get_lead(lead_id):
 
 
 @leads_bp.route("/<int:lead_id>", methods=["PATCH"])
+@token_required
 def update_lead(lead_id):
     """
     Atualiza campos editáveis de um lead.
@@ -137,6 +132,7 @@ def update_lead(lead_id):
 
 
 @leads_bp.route("/<int:lead_id>/conversations", methods=["GET"])
+@token_required
 def get_lead_conversations(lead_id):
     """Retorna o histórico de conversas do lead."""
     conn = get_connection()
@@ -161,6 +157,7 @@ def get_lead_conversations(lead_id):
 
 
 @leads_bp.route("/<int:lead_id>/followup-log", methods=["GET"])
+@token_required
 def get_lead_followup_log(lead_id):
     """
     Retorna o log completo de tentativas de follow-up de um lead.
@@ -183,6 +180,7 @@ def get_lead_followup_log(lead_id):
 
 
 @leads_bp.route("/<int:lead_id>/status", methods=["PATCH"])
+@token_required
 def update_lead_status(lead_id):
     """Atalho para atualizar somente o status de um lead."""
     conn = get_connection()

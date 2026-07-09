@@ -24,7 +24,7 @@ export default function ClientDashboardOtimizado() {
   const CLIENT_ID = 1; // ID chumbado para demo; na produção, virá do contexto/auth
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/dashboard/client/${CLIENT_ID}/overview`, { credentials: 'include' })
+    fetch(`${API_BASE}/api/dashboard/client/${CLIENT_ID}/overview`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('mfl_token') } })
       .then(res => {
         if (res.status === 401 || res.status === 403) {
           throw new Error("Sessão expirada ou acesso negado — faça login novamente");

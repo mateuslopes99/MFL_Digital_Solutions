@@ -38,10 +38,10 @@ export default function AdminDashboardOtimizado() {
     setDataLoading(true);
 
     Promise.all([
-      fetch(`${API_BASE}/api/dashboard/admin/overview`, { credentials: 'include' }).then(handleFetchError),
-      fetch(`${API_BASE}/api/dashboard/admin/followup/status`, { credentials: 'include' }).then(handleFetchError),
-      fetch(`${API_BASE}/api/dashboard/admin/token-costs`, { credentials: 'include' }).then(handleFetchError),
-      fetch(`${API_BASE}/api/dashboard/admin/followup/leads`, { credentials: 'include' }).then(handleFetchError)
+      fetch(`${API_BASE}/api/dashboard/admin/overview`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('mfl_token') } }).then(handleFetchError),
+      fetch(`${API_BASE}/api/dashboard/admin/followup/status`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('mfl_token') } }).then(handleFetchError),
+      fetch(`${API_BASE}/api/dashboard/admin/token-costs`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('mfl_token') } }).then(handleFetchError),
+      fetch(`${API_BASE}/api/dashboard/admin/followup/leads`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('mfl_token') } }).then(handleFetchError)
     ]).then(([overview, status, tokens, follows]) => {
       setOverviewData(overview);
       setFollowupStatus(status);
@@ -323,7 +323,8 @@ export default function AdminDashboardOtimizado() {
               id="btn-logout-admin"
               onClick={async () => {
                 try {
-                  await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+                  await fetch('/api/auth/logout', { method: 'POST' });
+                  localStorage.removeItem('mfl_token');
                 } catch (_) {}
                 window.location.href = '/login';
               }}

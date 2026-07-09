@@ -13,7 +13,16 @@ export function AuthProvider({ children }) {
 
     // Verifica sessão ao montar
     useEffect(() => {
-        fetch(`${API_BASE}/api/auth/me`, { credentials: 'include' })
+        const token = localStorage.getItem('mfl_token');
+        if (!token) {
+            setUser(null);
+            setLoading(false);
+            return;
+        }
+
+        fetch(`${API_BASE}/api/auth/me`, { 
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 setUser(data?.authenticated ? data : null);
@@ -29,12 +38,14 @@ export function AuthProvider({ children }) {
         try {
             const res = await fetch(`${API_BASE}/api/auth/login`, {
                 method: 'POST',
-                credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password, role }),
             });
             const data = await res.json();
             if (res.ok && data.success) {
+                if (data.token) {
+                    localStorage.setItem('mfl_token', data.token);
+                }
                 setUser({ ...data, authenticated: true });
                 return { success: true, role: data.role };
             }
@@ -45,7 +56,8 @@ export function AuthProvider({ children }) {
     }
 
     async function logout() {
-        await fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' });
+        await fetch(`${API_BASE}/api/auth/logout`, { method: 'POST' });
+        localStorage.removeItem('mfl_token');
         setUser(null);
     }
 

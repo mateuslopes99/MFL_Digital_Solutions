@@ -1,5 +1,5 @@
 /* ── Design System MFL — igual ao site comercial ─────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
 
 *,
 *::before,
@@ -10,19 +10,28 @@
 }
 
 :root {
-  --green: #00C853;
-  --green-dark: #009624;
-  --green-glow: rgba(0, 200, 83, 0.18);
-  --black: #080C0A;
-  --surface: #0E1410;
-  --surface2: #141A15;
-  --border: rgba(0, 200, 83, 0.15);
-  --border2: #1A2A1C;
-  --text: #E8F0EA;
-  --muted: #7A917E;
+  /* WhatsApp / Healthy */
+  --green: #25D366; 
+  --green-dark: #00C853;
+  --green-glow: rgba(37, 211, 102, 0.18);
+  
+  /* Infrastructure Black */
+  --black: #050505;
+  --surface: #0a0a0a;
+  --surface2: #111111;
+  
+  /* Precision Borders */
+  --border: rgba(255, 255, 255, 0.08);
+  --border-green: rgba(37, 211, 102, 0.3);
+  
+  /* Text */
+  --text: #e0e0e0;
+  --text-dim: #888888;
   --white: #ffffff;
-  --red: #FF5252;
-  --yellow: #FFD600;
+  
+  /* Semantic Temperature */
+  --red: #FF3B30;
+  --amber: #FFA000;
   --blue: #2196F3;
 }
 
@@ -37,10 +46,10 @@ html {
 }
 
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   background: var(--black);
   color: var(--text);
-  font-size: 16px;
+  font-size: 14px; /* Slightly smaller for density */
   line-height: 1.6;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -192,6 +201,34 @@ button {
     flex-direction: column !important;
     align-items: stretch !important;
   }
+
+/* ── Typography & Semantics ────────────────────────────────────────────────── */
+.font-mono {
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: -0.02em;
+}
+
+.text-hot { color: var(--green); }
+.text-warm { color: var(--amber); }
+.text-risk { color: var(--red); }
+.text-dim { color: var(--text-dim); }
+
+.bg-surface { background: var(--surface); }
+.bg-surface2 { background: var(--surface2); }
+
+.border-hairline {
+  border: 1px solid var(--border);
+}
+.border-hot { border: 1px solid var(--green); }
+.border-warm { border: 1px solid var(--amber); }
+.border-risk { border: 1px solid var(--red); }
+
+/* Remove soft corners */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
 
   .w-full-mobile {
     width: 100% !important;

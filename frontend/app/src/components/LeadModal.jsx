@@ -17,7 +17,7 @@ export default function LeadModal({ isOpen, onClose, lead, onStatusChange }) {
     const fetchConversations = async (leadId) => {
         setLoadingConv(true);
         try {
-            const res = await fetch(`/api/leads/${leadId}/conversations`, { credentials: 'include' });
+            const res = await fetch(`/api/leads/${leadId}/conversations`, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('mfl_token') } });
             const data = await res.json();
             setConversations(data.conversations || []);
         } catch {
@@ -34,8 +34,10 @@ export default function LeadModal({ isOpen, onClose, lead, onStatusChange }) {
         try {
             const res = await fetch(`/api/leads/${lead.id}/status`, {
                 method: 'PATCH',
-                credentials: 'include',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('mfl_token')
+                },
                 body: JSON.stringify({ status: newStatus }),
             });
             if (res.ok) {
