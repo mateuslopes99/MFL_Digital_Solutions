@@ -46,8 +46,7 @@ def _get_pg_pool():
             if "neon.tech" in url and "sslmode=require" not in url:
                 url += "?sslmode=require" if "?" not in url else "&sslmode=require"
                 
-            # ThreadedConnectionPool é essencial para Waitress (multi-thread)
-            _pg_pool = pool.ThreadedConnectionPool(1, 10, url)
+            _pg_pool = pool.SimpleConnectionPool(1, 10, url)
             logger.info("[DB] Pool PostgreSQL iniciado.")
         except ImportError:
             raise RuntimeError(
@@ -139,20 +138,7 @@ def get_connection():
     Em SQLite, retorna conexão nativa com row_factory=Row.
     """
     if _IS_POSTGRES:
-        pool = _get_pg_pool()
-        raw = pool.getconn()
-        
-        # Ping (validação de conexão viva)
-        try:
-            with raw.cursor() as cur:
-                cur.execute("SELECT 1")
-        except Exception:
-            # Se a conexão estiver morta (SSL dropped, idle timeout),
-            # nós descartamos essa do pool e pegamos uma nova.
-            logger.warning("[DB] Conexão morta detectada. Reciclando.")
-            pool.putconn(raw, close=True)
-            raw = pool.getconn()
-            
+        raw = _get_pg_pool().getconn()
         raw.autocommit = False
         return _PgConn(raw)
     else:
