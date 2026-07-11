@@ -416,6 +416,7 @@ def all_token_costs():
 
     results   = []
     total_brl = 0.0
+    total_tokens = 0
 
     for c in clients:
         custo  = get_monthly_token_cost(c["id"])
@@ -430,11 +431,13 @@ def all_token_costs():
         }
         results.append(item)
         total_brl += custo["custo_estimado"]
+        total_tokens += custo.get("tokens_mes", 0)
 
     results.sort(key=lambda x: x["custo_estimado"], reverse=True)
 
     return jsonify({
-        "total_custo_brl": round(total_brl, 2),
+        "total_cost_brl":  round(total_brl, 2),
+        "total_tokens":    total_tokens,
         "clients":         results,
         "count":           len(results),
     })
