@@ -59,7 +59,6 @@ class CORSFlask(Flask):
         response = super().make_default_options_response()
         origin = request.headers.get("Origin") or "https://mfl-frontend.pages.dev"
         response.headers["Access-Control-Allow-Origin"] = origin
-        response.headers["Access-Control-Allow-Credentials"] = "true"
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept"
         return response
@@ -68,7 +67,6 @@ class CORSFlask(Flask):
         response = super().process_response(response)
         origin = request.headers.get("Origin") or "https://mfl-frontend.pages.dev"
         response.headers["Access-Control-Allow-Origin"] = origin
-        response.headers["Access-Control-Allow-Credentials"] = "true"
         return response
 def create_app():
     """App Factory — cria e configura a instância Flask."""
