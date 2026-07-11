@@ -789,19 +789,19 @@ def get_monthly_token_cost(client_id: int) -> dict:
     if _IS_POSTGRES:
         cursor._raw.execute("""
             SELECT
-                COALESCE(SUM(tokens_used), 0) as total_tokens,
-                COUNT(*) as total_messages
+                SUM(tokens_used),
+                COUNT(*)
             FROM conversations
             WHERE lead_id IN (
                 SELECT id FROM leads WHERE client_id = %s
             )
-            AND created_at >= DATE_TRUNC('month', NOW())
+            AND created_at >= date_trunc('month', CURRENT_DATE)
             AND model_used != 'mock'
             AND model_used IS NOT NULL
         """, (client_id,))
         row = cursor._raw.fetchone()
-        total_tokens   = row[0] if row else 0
-        total_messages = row[1] if row else 0
+        total_tokens   = row[0] if (row and row[0] is not None) else 0
+        total_messages = row[1] if (row and row[1] is not None) else 0
     else:
         cursor.execute("""
             SELECT

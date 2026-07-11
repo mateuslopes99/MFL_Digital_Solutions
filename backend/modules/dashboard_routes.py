@@ -437,6 +437,7 @@ def all_token_costs():
 
     return jsonify({
         "total_cost_brl":  round(total_brl, 2),
+        "total_custo_brl": round(total_brl, 2),
         "total_tokens":    total_tokens,
         "clients":         results,
         "count":           len(results),
@@ -456,9 +457,20 @@ def followup_status():
     # Permite forçar execução manual (útil para testes)
     if request.args.get("run_now") == "1":
         process_followups()
-        return jsonify({"message": "Follow-ups processados manualmente.", **get_scheduler_status()})
+        st = get_scheduler_status()
+        return jsonify({
+            "message": "Follow-ups processados manualmente.",
+            "alive": st["healthy"],
+            "jobs_count": st["count"],
+            **st
+        })
 
-    return jsonify(get_scheduler_status())
+    st = get_scheduler_status()
+    return jsonify({
+        "alive": st["healthy"],
+        "jobs_count": st["count"],
+        **st
+    })
 
 
 @dashboard_bp.route("/admin/followup/leads", methods=["GET"])
